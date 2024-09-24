@@ -1,0 +1,274 @@
+%start inicio
+
+// TODO add error handling
+%%
+
+ini: 
+    instructions EOF    
+|   EOF                 
+;
+
+instructions:
+    instructions instruction RW_SCOLON  { $1.push($2); $$ = $1; }
+|   instruction RW_SCOLON               { $$ = [$1]; }
+;
+
+instruction:
+/*-------------------------------SQL LANGUAGE GRAMMARS-------------------------------*/
+    ddl                     { $$ = $1; }
+|   dml                     { $$ = $1; }
+/*-------------------------------STRUCTURES-------------------------------*/
+|   if_struct               { $$ = $1; }
+|   case_struct             { $$ = $1; }
+|   while_struct            { $$ = $1; }
+|   for_struct              { $$ = $1; }
+/*-------------------------------CONTROL-------------------------------*/
+|   RW_BREAK                { $$ = new Break(@1.first_line, @1.first_column); }
+|   RW_CONTINUE             { $$ = new Continue(@1.first_line, @1.first_column); }
+|   RW_RETURN expression    { $$ = new Return($2, @1.first_line, @1.first_column); }
+|   RW_RETURN               { $$ = new Return(undefined, @1.first_line, @1.first_column); }
+/*-------------------------------FUNCTIONS&METHODS-------------------------------*/
+|   call_func_mth           { $$ = $1; }    
+|   declare_function        { $$ = $1; }
+|   declare_method          { $$ = $1; }    
+/*-------------------------------DECLARATION-------------------------------*/
+|   declare_var             { $$ = $1; }
+|   set_var                 { $$ = $1; }
+/*-------------------------------ENV-------------------------------*/
+|   encapsulated            { $$ = $1; }
+/*-------------------------------UTILITY-------------------------------*/
+|   cast                    { $$ = $1; }        
+|   print                   { $$ = $1; }
+|   error                   { 
+        let err = new SynError(@1.first_line, @1.first_column, "Syntax", $1)
+        synErrors.push(err);
+        err.print();
+    }
+;
+
+/*-------------------------------SQL LANGUAGE GRAMMARS-------------------------------*/
+ddl:
+    RW_CREATE RW_TABLE RW_ID RW_LPAR typed_arguments RW_RPAR    { $$ = new Create($3, $5, @1.first_line, @1.first_column); }
+|   RW_ALTER RW_TABLE RW_ID alter_actions                       { $$ = new Alter($3, $4, @1.first_line, @1.first_column); }
+|   RW_DROP RW_TABLE RW_ID                                      { $$ = new Drop($3, @1.first_line, @1.first_column); }
+;
+
+dml:
+    RW_INSERT RW_INTO RW_ID RW_LPAR arguments RW_RPAR RW_VALUES RW_LPAR value_arguments RW_RPAR { $$ = new Insert($3, $5, $9, @1.first_line, @1.first_column); }
+|   select_stmt                                                                                 { $$ = $1; }    
+|   RW_UPDATE RW_ID RW_SET set_arguments RW_WHERE where_cond                                    { $$ = new Update($2, $4, $6 ,@1.first_line, @1.first_column); }
+|   RW_TRUNCATE RW_TABLE RW_ID                                                                  { $$ = new Truncate($3, @1.first_line, @1.first_column); }
+|   RW_DELETE RW_FROM RW_ID RW_WHERE where_cond                                                 { $$ = new Delete($3, $5, @1.first_line, @1.first_column); }
+;
+
+alter_actions:
+    RW_ADD RW_ID type                       { $$ = {type: AlterActions.ADD, col: $2, colType: $3}; }
+|   RW_DROP RW_COLUMN RW_ID                 { $$ = {type: AlterActions.DROP, col: $3}; }
+|   RW_RENAME RW_TO RW_ID                   { $$ = {type: AlterActions.RENAMETABLE, newId: $3}; }
+|   RW_RENAME RW_COLUMN RW_ID RW_TO RW_ID   { $$ = {type: AlterActions.RENAMECOL, col: $3, newId: $5}; }
+;
+
+select_stmt:
+    RW_SELECT select_arguments RW_FROM RW_ID                        { $$ = new SelectTable($2, $4, undefined, @1.first_line, @1.first_column); }
+|   RW_SELECT select_arguments RW_FROM RW_ID RW_WHERE where_cond    { $$ = new SelectTable($2, $4, $6, @1.first_line, @1.first_column); }
+// TODO I DONT KNOW IF THIS IS CORRECT
+//|   RW_SELECT RW_VAR                                            {}
+|   RW_SELECT expression RW_AS RW_ID                            { $$ = new SelectExpr($2, $4, @1.first_line, @1.first_column); }
+|   RW_SELECT expression                                        { $$ = new SelectExpr($2, undefined, @1.first_line, @1.first_column); }
+// TODO I DONT KNOW IF THIS IS CORRECT
+//|   RW_SELECT RW_VAR AS RW_ID                                   {}
+;
+
+// I created this class because I'm lazy (I don't want write "new WherePred" every single time)
+where_cond:
+    expression  { $$ = new WherePredicate($1, @1.first_line, @1.first_column); }
+;
+
+/*
+log_operator:
+    RW_AND  { $$ = LogicalOperator.AND; }
+|   RW_OR   { $$ = LogicalOperator.OR; }
+|   RW_NOT  { $$ = LogicalOperator.NOT; }
+;
+*/
+
+/*-------------------------------ARGUMENTS-------------------------------*/
+select_arguments:
+    RW_STAR         { $$ = [new PrimitiveVar($1, Primitive.VARCHAR, @1.first_column, @1.first_line)]; }
+|   value_arguments { $$ = $1; }
+;
+
+// TODO make this save the specified value
+set_arguments:
+    set_arguments RW_COMA RW_ID RW_EQ expression { $1.push({col: $3, val: $5}); $$ = $1; }
+|   RW_ID RW_EQ expression                       { $$ = [{col: $1, val: $3}]; }
+;
+
+value_arguments:
+    value_arguments RW_COMA expression  { $1.push($3); $$ = $1; }
+|   expression                          { $$ = [$1]; }
+;
+
+arguments:
+    arguments RW_COMA RW_ID { $1.push($3); $$ = $1; }
+|   RW_ID                   { $$ = [$1]; }
+;
+
+// TODO make this save the specified value
+typed_arguments:
+    typed_arguments RW_COMA RW_ID type  { $1.push({id: $3, type: $4}); $$ = $1; }
+|   RW_ID type                          { $$ = [{id: $1, type: $2}]; }
+;
+
+// TODO make this save the specified value
+typed_var_arguments:
+    typed_var_arguments RW_COMA RW_VAR type { $1.push({id: $3, type: $4}); $$ = $1; }
+|   RW_VAR type                             { $$ = [{id: $1, type: $2}];}
+;
+
+/*-------------------------------TYPE-------------------------------*/
+type:
+    RW_INT      { $$ = Primitive.INT; }
+|   RW_VARCHAR  { $$ = Primitive.VARCHAR; }
+|   RW_DOUBLE   { $$ = Primitive.DOUBLE; }
+|   RW_DATE     { $$ = Primitive.DATE; }
+|   RW_BOOLEAN  { $$ = Primitive.BOOLEAN; }
+|   RW_NULL     { $$ = Primitive.NULL; }
+;
+
+/*-------------------------------STRUCTURES-------------------------------*/
+// TODO wait for an official test file
+if_struct:
+    RW_IF expression RW_THEN env RW_ELSE env RW_END RW_IF  { $4.envName = "if_env";$6.envName = "else_env";$$ = new If($2, $4, $6, @1.first_line, @1.first_column, "if_env"); }
+|   RW_IF expression RW_THEN RW_BEGIN env RW_END RW_IF     { $5.envName = "if_env";$$ = new If($2, $5, undefined, @1.first_line, @1.first_column, "if_env"); }
+;
+
+case_struct:
+    searched_case   { $$ = $1; }
+|   simple_case     { $$ = $1; }
+;
+
+simple_case:
+// TODO also change the last expression to a primitive
+    RW_CASE expression simple_case_cases RW_ELSE primitive RW_END              { $$ = new SimpleCase($2, $3, $5, undefined,@1.first_line, @1.first_column); }
+|   RW_CASE expression simple_case_cases RW_ELSE primitive RW_END RW_AS RW_VAR { $$ = new SimpleCase($2, $3, $5, $8 ,@1.first_line, @1.first_column); }
+;
+
+simple_case_cases:
+    simple_case_cases RW_WHEN primitive RW_THEN primitive   { $1.push({when: $3, then: $5}); $$ = $1; }
+|   RW_WHEN primitive RW_THEN primitive                     { $$ = [{when: $2, then: $4}];}
+;
+
+searched_case:
+    RW_CASE searched_case_cases RW_ELSE primitive RW_END                { $$ = new SearchedCase($2, $4, undefined, @1.first_line, @1.first_column); }
+|   RW_CASE searched_case_cases RW_ELSE primitive RW_END RW_AS RW_VAR   { $$ = new SearchedCase($2, $4, $7, @1.first_line, @1.first_column); }
+;
+
+searched_case_cases:
+    searched_case_cases RW_WHEN expression RW_THEN primitive    { $1.push({when: $3, then: $5}); $$ = $1; }
+|   RW_WHEN expression RW_THEN primitive                        { $$ = [{when: $2, then: $4}]; }
+;
+
+while_struct:
+    RW_WHILE expression RW_BEGIN env RW_END { $$ = new While($2, $4, @1.first_line, @1.first_column); }
+;
+
+for_struct:
+    RW_FOR RW_VAR RW_IN RW_INT RW_DOT RW_DOT RW_INT RW_BEGIN env RW_END RW_LOOP { $9.envName = "for_env";$$ = new For($2, $9, $4, $7, @1.first_line, @1.first_column); }
+;
+
+encapsulated:
+    RW_BEGIN env RW_END    { $$ = $2; }
+;
+
+/*-------------------------------FUNCTIONS&METHODS-------------------------------*/
+declare_function:
+    RW_CREATE RW_FUNCTION RW_ID RW_LPAR typed_var_arguments RW_RPAR RW_RETURNS type RW_BEGIN env RW_END { $$ = new Function($3, $5, $8, $10, @1.first_line, @1.first_column); }
+;
+
+declare_method:
+    RW_CREATE RW_PROCEDURE RW_ID typed_var_arguments RW_AS RW_BEGIN env RW_END  { $$ = new Method($3, $4, $7, @1.first_line, @1.first_column); }
+|   RW_CREATE RW_PROCEDURE RW_ID RW_AS RW_BEGIN env RW_END  { $$ = new Method($3, undefined, $6, @1.first_line, @1.first_column); }
+;
+
+/*-------------------------------DECLARATION-------------------------------*/
+// TODO chage this when official test file is released
+declare_var:
+    RW_DECLARE typed_var_arguments                  { $$ = new Declaration($2, undefined, @1.first_line, @1.first_column); }
+|   RW_DECLARE RW_VAR type RW_DEFAULT expression    { $$ = new Declaration([{id: $2, type: $3}], $5, @1.first_line, @1.first_column); }
+;
+
+set_var:
+    RW_SET RW_VAR RW_EQ expression  { $$ = new SetVar($2, $4, @1.first_line, @1.first_column); }
+;
+
+/*-------------------------------ENVIRONMENTS-------------------------------*/
+
+env:
+    instructions    { $$ = new CodeBlock($1, @1.first_line, @1.first_column); }
+// THIS IS EMPTY I GUES
+|                   { $$ = undefined; }
+;
+
+/*-------------------------------EXPRESSIONS-------------------------------*/
+expression:
+    logic                       { $$ = $1; }
+|   relational                  { $$ = $1; }
+|   primitive                   { $$ = $1; }
+|   arithmetic                  { $$ = $1; }
+|   call_func_mth               { $$ = $1; }
+|   cast                        { $$ = $1; } 
+|   RW_VAR                      { $$ = new CallVar($1, @1.first_line, @1.first_column); }
+|   RW_ID                       { $$ = new IdVar($1, @1.first_line, @1.first_column); } // This will return a simple string that represents an id (interpreted as a column)
+|   RW_LPAR expression RW_RPAR  { $$ = $2; }
+|   RW_LPAR select_stmt RW_RPAR { $$ = $2; }
+;
+
+relational:
+    expression RW_EQ expression         { $$ = new Relational($1, RelationalOperator.EQ, $3, @1.first_line, @1.first_column); }
+|   expression RW_GEQ expression        { $$ = new Relational($1, RelationalOperator.GEQ, $3, @1.first_line, @1.first_column); }
+|   expression RW_LEQ expression        { $$ = new Relational($1, RelationalOperator.LEQ, $3, @1.first_line, @1.first_column); }
+|   expression RW_GREATER expression    { $$ = new Relational($1, RelationalOperator.GREATER, $3, @1.first_line, @1.first_column); }
+|   expression RW_LESS expression       { $$ = new Relational($1, RelationalOperator.LESS, $3, @1.first_line, @1.first_column); }
+|   expression RW_NOTEQ expression      { $$ = new Relational($1, RelationalOperator.NEQ, $3, @1.first_line, @1.first_column); }
+;
+
+logic:
+    expression RW_AND expression    { $$ = new Logical($1, LogicalOperator.AND, $3, @1.first_line, @1.first_column); }
+|   expression RW_OR expression     { $$ = new Logical($1, LogicalOperator.OR, $3, @1.first_line, @1.first_column); }
+|   RW_NOT expression               { $$ = new Logical(undefined, LogicalOperator.NOT, $2, @1.first_line, @1.first_column); }
+;
+
+primitive:
+    RW_INT      { $$ = new PrimitiveVar($1, Primitive.INT , @1.first_line, @1.first_column); }
+|   RW_DOUBLE   { $$ = new PrimitiveVar($1, Primitive.DOUBLE , @1.first_line, @1.first_column); }
+|   RW_DATE     { $$ = new PrimitiveVar($1, Primitive.DATE , @1.first_line, @1.first_column); }
+|   RW_VARCHAR  { $$ = new PrimitiveVar($1, Primitive.VARCHAR, @1.first_line, @1.first_column); }
+|   RW_TRUE     { $$ = new PrimitiveVar($1, Primitive.BOOLEAN , @1.first_line, @1.first_column); }
+|   RW_FALSE    { $$ = new PrimitiveVar($1, Primitive.BOOLEAN, @1.first_line, @1.first_column); }
+|   RW_NULL     { $$ = new PrimitiveVar(null, Primitive.NULL, @1.first_line, @1.first_column); }
+;
+
+arithmetic:
+    expression RW_PLUS expression       { $$ = new Arithmetic($1, ArithmeticOperator.PLUS, $3, @1.first_line, @1.first_column); }
+|   expression RW_MINUS expression      { $$ = new Arithmetic($1, ArithmeticOperator.MINUS, $3, @1.first_line, @1.first_column); }
+|   expression RW_DIV expression        { $$ = new Arithmetic($1, ArithmeticOperator.DIV, $3, @1.first_line, @1.first_column); }
+|   expression RW_STAR expression       { $$ = new Arithmetic($1, ArithmeticOperator.MULT, $3, @1.first_line, @1.first_column); }
+|   expression RW_MOD expression        { $$ = new Arithmetic($1, ArithmeticOperator.MOD, $3, @1.first_line, @1.first_column); }
+|   RW_MINUS expression %prec UMINUS    { $$ = new Arithmetic(undefined, ArithmeticOperator.UMINUS, $2, @1.first_line, @1.first_column); }
+;
+
+    
+call_func_mth:
+    RW_ID RW_LPAR value_arguments RW_RPAR   { $$ = new CallFunc($1, $3, @1.first_line, @1.first_column); }
+|   RW_ID RW_LPAR RW_RPAR                   { $$ = new CallFunc($1, undefined, @1.first_line, @1.first_column); }
+;
+
+/*-------------------------------FUNCTIONS-------------------------------*/
+cast:
+    RW_CAST RW_LPAR expression RW_AS type RW_RPAR   { $$ = new Cast($3, $5)}
+;
+
+print:
+    RW_PRINT expression { $$ = new Print($2, @1.first_line, @1.first_column); }
+;
