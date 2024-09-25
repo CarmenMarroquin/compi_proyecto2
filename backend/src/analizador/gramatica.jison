@@ -47,7 +47,6 @@
 "null"                                 return "RW_NULL";
 "void"                                 return "RW_VOID";
 
-
 "switch"                               return "RW_SWITCH";
 "case"                                 return "RW_CASE";
 "default"                              return "RW_DEFAULT";            
@@ -221,27 +220,62 @@ tipo:
 
 
 expresion:
+    primitivo
+|   TK_IPAR expresion TK_DPAR
+|   cast
+|   aritmeticas
+|   logica
+|   booleanas
+|   TK_ID
+;
+
+primitivo:
     TK_INT
 |   TK_STRING
 |   TK_DOUBLE
 |   TK_CHAR
+|   RW_NULL
 |   RW_FALSE
 |   RW_TRUE
-|   tk_ipar expresion tk_dpar
-|   cast
 ;
 
-aritmeticas
- expresion tk_suma expresion
- expresion tk_resta expresion
+aritmeticas:
+    expresion TK_SUMA expresion
+|   expresion TK_RESTA expresion
+|   expresion TK_MULTI expresion
+|   expresion TK_DIV expresion
+|   expresion TK_POTENCIA expresion
+|   expresion TK_RAIZ expresion
+|   expresion TK_MODULO expresion
+|   TK_RESTA expresion %prec UMINUS
+;
 
-logicas
- expresion tk_menor_igual expresion
+logica:
+    expresion TK_MENOR_IGUAL expresion
+|    expresion TK_MAYOR_IGUAL expresion
+|    expresion TK_MENOR expresion
+|    expresion TK_MAYOR expresion
+|   expresion TK_IGUALACION expresion
+|   expresion TK_IGUAL expresion
+|   expresion TK_DIFERENCIACION expresion
+;
 
 booleanas
-expresion tk_or expresion
+    expresion TK_OR expresion
+|   expresion TK_AND expresion
+|   expresion TK_NOT expresion
+;
 
-primitivas 
+argumentos:
+    TK_ID TK_IGUAL expresion
+|   argumentos TK_COMA TK_ID TK_IGUAL expresion 
+;
+
+llamar_func:
+    TK_ID TK_IPAR argumentos TK_DPAR
+|   TK_ID TK_IPAR TK_DPAR
+;
+
 
 cast:
     RW_CAST TK_IPAR expresion RW_AS tipo TK_DPAR 
