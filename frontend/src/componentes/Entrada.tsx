@@ -2,9 +2,6 @@ import { useState } from 'react'
 import Form from 'react-bootstrap/Form';
 
 
-
-
-
 function Entrada() {
     return (
       <Form>
