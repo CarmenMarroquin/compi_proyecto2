@@ -4,12 +4,14 @@ import Navbar from 'react-bootstrap/Navbar';
 import Botones from './Botones';
 
 type Props = {
-    handleArchivos: (eventKey:string| null) => void,
-    handleEjecutar: (eventKey:string| null) => void,
-    handleReportes: (eventKey:string| null) => void
+  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void,
+  nuevoArchivo: () => void,
+  saveFileContent: () => void,
+    handleEjecutar: (eventKey:string) => void,
+    handleReportes: (eventKey:string) => void
   }
 
-function Navb({handleArchivos, handleEjecutar, handleReportes}: Props) {
+function Navb({handleFileUpload, nuevoArchivo, saveFileContent, handleEjecutar, handleReportes}: Props) {
     return (
       <>
         <Navbar bg="dark" data-bs-theme="dark">
@@ -17,7 +19,10 @@ function Navb({handleArchivos, handleEjecutar, handleReportes}: Props) {
             <Navbar.Brand href="#home">MENU</Navbar.Brand>
             <Nav className="me-auto">
             <Botones 
-            handleArchivos={handleArchivos}
+            handleFileUpload={handleFileUpload}
+            nuevoArchivo={nuevoArchivo}
+            saveFileContent={saveFileContent}
+
             handleEjecutar={handleEjecutar}
             handleReportes={handleReportes}
             />

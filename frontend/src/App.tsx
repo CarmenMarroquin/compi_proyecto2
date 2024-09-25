@@ -1,11 +1,10 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 
 
-import Entrada from './assets/componentes/Entrada'
-import Consola from './assets/componentes/Consol'
-import Navb from './assets/componentes/navbar'
+
+import Consola, { Estado } from './componentes/Consol'
+
+import Navb from './componentes/navbar'
 import { Stack } from 'react-bootstrap'
 
 import CodeMirror from "@uiw/react-codemirror";
@@ -14,25 +13,72 @@ import {dracula} from '@uiw/codemirror-theme-dracula';
 
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [amor, setAmor] = useState(2);
-
   const [code, setCode] = useState("// Escribe tu codigo");
+
+  const [fileContent, setFileContent] = useState<string | null>(null);
+
+  const [estado, setEstado] = useState<Estado>(Estado.Consola);
+  const [consola, setConsola] = useState<string>("SALIDA DE CODIGO");
+  const [simbolos, setSimbolos] = useState<string>("tabla de simbolos");
+  const [errores, setErrores] = useState<string>("tabla de errores");
+  const [ast, setAst] = useState<string>("Arbol de sintaxis abstracta");
+
+  function handleFileUpload (event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]; // Obtener el primer archivo
+
+    if (file) {
+      const reader = new FileReader();
+  
+      reader.onload = (e) => {
+        setCode("");
+        const text = e.target?.result as string;
+        setCode(text);
+      };
+      reader.readAsText(file); // Leer el archivo como texto
+    }
+  };
+
 
   function handleCodeChange(value: string) {
     setCode(value);
   }
 
-  function handleArchivos(eventKey: string){
-    // algo
+  function nuevoArchivo(){
+    setCode("");
   }
 
+    // Función para guardar el contenido del archivo en uno nuevo
+  function saveFileContent () {
+      if (code !== "") {
+        const blob = new Blob([code], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'archivo_guardado.ci'; // Nombre del archivo nuevo
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    };
+
   function handleEjecutar(eventKey: string){
-    // algo
+    // TODO
+    console.log("EJECUTANDO")
   }
 
   function handleReportes(eventKey: string){
-    //alog
+    switch(eventKey){
+      case "1":
+        setEstado(Estado.Errores);
+        break;
+      case "2":
+        setEstado(Estado.Ast);
+        break;
+      case "3":
+        setEstado(Estado.Simbolos); 
+        break;
+      case "4":
+        setEstado(Estado.Consola);
+    }
   }
 
   return (
@@ -40,7 +86,9 @@ function App() {
 
       <div>
         <Navb 
-        handleArchivos={handleArchivos}
+        handleFileUpload={handleFileUpload}
+        nuevoArchivo={nuevoArchivo}
+        saveFileContent={saveFileContent}
         handleEjecutar={handleEjecutar}
         handleReportes={handleReportes}
         />
@@ -57,7 +105,13 @@ function App() {
         />
       </div>
       <div className="p-2">
-        <Consola/>
+        <Consola
+        estado={estado}
+        ast={ast}
+        simbolos={simbolos}
+        errores={errores}
+        consola={consola}
+        />
       </div>
 
     </Stack>
