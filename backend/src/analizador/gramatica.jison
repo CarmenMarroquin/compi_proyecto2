@@ -153,11 +153,10 @@
 %left "TK_OR"
 %left "TK_AND"
 %right "TK_NOT"
-%left "TK_IGUALACION" "TK_DIFERENCIACION"
-%left "TK_MENOR" "TK_MENOR_IGUAL" "TK_MAYOR" "TK_MAYOR_IGUAL"
+%left "TK_MENOR" "TK_MENOR_IGUAL" "TK_MAYOR" "TK_MAYOR_IGUAL" "TK_IGUALACION" "TK_DIFERENCIACION"
 %left "TK_MAS" "TK_MENOS"
 %left "TK_MULTI" "TK_DIV" "TK_MOD"
-%left "TK_RAIZ" "TK_POTENCIA"
+%nonassoc "TK_RAIZ" "TK_POTENCIA"
 %right "UMINUS"
 
 /*to regonize this token we should call it with %prec UMINUS after delcaring a production
@@ -182,26 +181,43 @@ instrucciones:
 
 instruccion : 
     declaracion_variables 
-|   declaracion_funciones
-|   ejecutar
+|   incremento_decremento
+|   asignacion_variables
+|   sentencias_control
+//|   declaracion_funciones // TODO 
+//|   ejecutar
 ;
 
+/* 
++++++++++++++++++++++++++++++
++   SENTENCIAS DE CONTROL   +
++++++++++++++++++++++++++++++
+*/
+
+
+
+/* 
++++++++++++++++++++++++++++++
++        INCRE DECRE        +
++++++++++++++++++++++++++++++
+*/
+incremento_decremento:
+    expresion TK_MAS TK_MAS
+|   expresion TK_MENOS TK_MENOS
+;
+
+
+/* 
++++++++++++++++++++++++++++++
++        VARIABLES          +
++++++++++++++++++++++++++++++
+*/
 declaracion_variables:
     RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion TK_PUNTO_COMA
 |   RW_LET identificadores TK_DOS_PUNTOS tipo TK_PUNTO_COMA
 |   RW_CONST identificadores TK_DOS_PUNTOS tipo TK_PUNTO_COMA
 |   RW_CONST identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion TK_PUNTO_COMA
-|   RW_LET TK_ID TK_DOS_PUNTOS 
-|   RW_CONST
-;
-
-/* ya no segui hay que termina*/
-vectores:
-    vectores 
-    TK_ICORCHETE TK_DCORCHETE
-|   
-   
-   
+|   vectores
 ;
 
 identificadores:
@@ -217,16 +233,49 @@ tipo:
 |   RW_CHAR
 ;
 
+vectores:
+    RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_PUNTO_COMA
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_PUNTO_COMA
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE TK_PUNTO_COMA
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE TK_ICORCHETE lista_valores TK_DCORCHETE TK_COMA TK_ICORCHETE lista_valores TK_DCORCHETE TK_DCORCHETE TK_PUNTO_COMA
+;
+
+lista_valores:
+    lista_valores TK_COMA expresion
+|   expresion
+;
 
 
+asignacion_variables:
+    TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion TK_PUNTO_COMA
+|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion TK_PUNTO_COMA
+|   TK_ID TK_IGUAL expresion
+;
+
+/* 
++++++++++++++++++++++++++++++
++        INCRE DECRE        +
++++++++++++++++++++++++++++++
+*/
+
+
+
+/* 
++++++++++++++++++++++++++++++
++        EXPRESIONES        +
++++++++++++++++++++++++++++++
+*/
 expresion:
     primitivo
-|   TK_IPAR expresion TK_DPAR
 |   cast
 |   aritmeticas
 |   logica
 |   booleanas
 |   TK_ID
+|   llamar_func
+|   operador_ternario
+|   acceso_vectores
+|   TK_IPAR expresion TK_DPAR
 ;
 
 primitivo:
@@ -252,15 +301,15 @@ aritmeticas:
 
 logica:
     expresion TK_MENOR_IGUAL expresion
-|    expresion TK_MAYOR_IGUAL expresion
-|    expresion TK_MENOR expresion
-|    expresion TK_MAYOR expresion
+|   expresion TK_MAYOR_IGUAL expresion
+|   expresion TK_MENOR expresion
+|   expresion TK_MAYOR expresion
 |   expresion TK_IGUALACION expresion
 |   expresion TK_IGUAL expresion
 |   expresion TK_DIFERENCIACION expresion
 ;
 
-booleanas
+booleanas:
     expresion TK_OR expresion
 |   expresion TK_AND expresion
 |   expresion TK_NOT expresion
@@ -276,12 +325,17 @@ llamar_func:
 |   TK_ID TK_IPAR TK_DPAR
 ;
 
-
 cast:
     RW_CAST TK_IPAR expresion RW_AS tipo TK_DPAR 
 ;
 
+operador_ternario:
+    RW_IF TK_IPAR expresion TK_DPAR expresion TK_DOS_PUNTOS expresion
+;
 
 
+acceso_vectores:
+    TK_ID TK_ICORCHETE expresion TK_DCORCHETE
+|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE
+;
     
-
