@@ -71,6 +71,7 @@
 "const"                                return "RW_CONST";
 "new"                                  return "RW_NEW";
 "vector"                               return "RW_VECTOR";
+"is"                                   return "RW_IS";
 
 
 // good morning pineapple, looking very good and very nice AAAAAA :)
@@ -170,8 +171,17 @@
 %%
 
 inicio: 
-    instructiones EOF    
+    instrucciones EOF    
 |   EOF                 
+;
+
+global:
+    declaracion_variables TK_PUNTO_COMA
+|   declaracion_constantes TK_PUNTO_COMA
+|   declaracion_vectores TK_PUNTO_COMA
+|   declaracion_funciones
+|   declaracion_metodo
+|   ejecutar TK_PUNTO_COMA
 ;
 
 instrucciones:
@@ -180,21 +190,123 @@ instrucciones:
 ;
 
 instruccion : 
-    declaracion_variables 
-|   incremento_decremento
-|   asignacion_variables
+/*----------------------------DECLARACION----------------------------*/
+    declaracion_variables TK_PUNTO_COMA 
+|   declaracion_constantes TK_PUNTO_COMA
+|   declaracion_vectores TK_PUNTO_COMA
+|   asignacion_variables TK_PUNTO_COMA
+|   incremento_decremento TK_PUNTO_COMA
+/*--------------------------SENTENCIAS CONTROL---------------------------*/
 |   sentencias_control
-//|   declaracion_funciones // TODO 
-//|   ejecutar
+/*--------------------------SENTENCIAS CICLICAS---------------------------*/
+|   sentencias_ciclicas
+/*----------------------------TRANSFERENCIA----------------------------*/
+|   RW_BREAK TK_PUNTO_COMA
+|   RW_CONTINUE TK_PUNTO_COMA
+|   RW_RETURN expresion TK_PUNTO_COMA
+|   RW_RETURN TK_PUNTO_COMA
+/*----------------------------FUNCIONES----------------------------*/
+//|   declaracion_funciones TK_PUNTO_COMA
+//|   delcaracion_metodos
+|   llamadas TK_PUNTO_COMA
+|   echo TK_PUNTO_COMA
 ;
+
+/* 
++++++++++++++++++++++++++++++
++         EJECUTAR          +
++++++++++++++++++++++++++++++
+*/
+ejecutar:
+    RW_EJECUTAR TK_ID TK_IPAR TK_DPAR
+|   RW_EJECUTAR TK_ID TK_IPAR parametros_llamada TK_DPAR
+;
+
+
 
 /* 
 +++++++++++++++++++++++++++++
 +   SENTENCIAS DE CONTROL   +
 +++++++++++++++++++++++++++++
 */
+sentencias_control:
+    sentencia_if
+|   sentencia_switch
+;
+
+// TODO: CHECK IF STATEMENT
+sentencia_if:
+    RW_IF TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+|   RW_IF TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE RW_ELSE TK_ICORCHETE instrucciones TK_DCORCHETE
+|   RW_IF TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE RW_ELSE sentencia_if
+;
 
 
+// TODO: CHECK IF SWITCH STATEMENT WORKS
+sentencia_switch:
+    RW_SWITCH TK_IPAR expresion TK_DPAR TK_ICORCHETE cases case_default TK_DCORCHETE
+|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ICORCHETE cases TK_DCORCHETE
+|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ICORCHETE case_default TK_DCORCHETE
+;
+
+cases:
+    cases case
+|   case
+;
+
+case:
+    RW_CASE expresion TK_DOS_PUNTOS entorno
+;
+
+case_default:
+    RW_DEFAULT TK_DOS_PUNTOS entorno
+;
+
+
+/* 
++++++++++++++++++++++++++++++
++  SENTENCIAS DE CICLICAS   +
++++++++++++++++++++++++++++++
+*/
+sentencias_ciclicas:
+    sentencia_while
+|   sentencia_for
+|   sentencia_do
+|   sentencia_loop
+;
+
+sentencia_while:
+    RW_WHILE TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+;
+
+sentencia_for:
+    RW_FOR TK_IPAR declaracion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_IPAR TK_ICORCHETE entorno TK_DCORCHETE
+|   RW_FOR TK_IPAR asignacion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_IPAR TK_ICORCHETE entorno TK_DCORCHETE
+;
+
+actualizacion_for:
+    incremento_decremento
+|   TK_ID TK_IGUAL expresion
+;
+
+sentencia_do:
+    RW_DO TK_ICORCHETE entorno TK_DCORCHETE until TK_IPAR expresion TK_DPAR
+;
+
+sentencia_loop:
+    RW_LOOP TK_ICORCHETE entorno TK_DCORCHETE
+;
+
+/*
++++++++++++++++++++++++++++++
++          ENTORNOS         +
++++++++++++++++++++++++++++++
+*/
+
+entorno:
+    instrucciones
+|                   { $$ = undefined; }
+;
 
 /* 
 +++++++++++++++++++++++++++++
@@ -202,8 +314,8 @@ instruccion :
 +++++++++++++++++++++++++++++
 */
 incremento_decremento:
-    expresion TK_MAS TK_MAS
-|   expresion TK_MENOS TK_MENOS
+    TK_ID TK_MAS TK_MAS
+|   TK_ID TK_MENOS TK_MENOS
 ;
 
 
@@ -213,12 +325,16 @@ incremento_decremento:
 +++++++++++++++++++++++++++++
 */
 declaracion_variables:
-    RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion TK_PUNTO_COMA
-|   RW_LET identificadores TK_DOS_PUNTOS tipo TK_PUNTO_COMA
-|   RW_CONST identificadores TK_DOS_PUNTOS tipo TK_PUNTO_COMA
-|   RW_CONST identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion TK_PUNTO_COMA
-|   vectores
+    RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion 
+|   RW_LET identificadores TK_DOS_PUNTOS tipo 
 ;
+
+declaracion_constantes:
+    RW_CONST identificadores TK_DOS_PUNTOS tipo 
+|   RW_CONST identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion 
+;
+
+
 
 identificadores:
     identificadores TK_COMA TK_ID
@@ -233,11 +349,11 @@ tipo:
 |   RW_CHAR
 ;
 
-vectores:
-    RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_PUNTO_COMA
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_PUNTO_COMA
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE TK_PUNTO_COMA
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE TK_ICORCHETE lista_valores TK_DCORCHETE TK_COMA TK_ICORCHETE lista_valores TK_DCORCHETE TK_DCORCHETE TK_PUNTO_COMA
+declaracion_vectores:
+    RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE 
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE TK_ICORCHETE lista_valores TK_DCORCHETE TK_COMA TK_ICORCHETE lista_valores TK_DCORCHETE TK_DCORCHETE
 ;
 
 lista_valores:
@@ -247,18 +363,73 @@ lista_valores:
 
 
 asignacion_variables:
-    TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion TK_PUNTO_COMA
-|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion TK_PUNTO_COMA
+    TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion
+|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion
 |   TK_ID TK_IGUAL expresion
+;
+
+
+/* 
++++++++++++++++++++++++++++++
++        FUNCIONES          +
++++++++++++++++++++++++++++++
+*/
+
+declaracion_funciones:
+    RW_FUNTION tipo TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+|   RW_FUNTION tipo TK_ID TK_IPAR TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+;
+
+parametros_funcion:
+    parametros_funcion, parametro_funcion
+|   parametro_funcion
+;
+
+parametro_funcion:
+    TK_ID TK_DOS_PUNTOS tipo TK_IGUAL expresion
+|   TK_ID TK_DOS_PUNTOS tipo
 ;
 
 /* 
 +++++++++++++++++++++++++++++
-+        INCRE DECRE        +
++         METODOS           +
++++++++++++++++++++++++++++++
+*/
+delcaracion_metodos:
+    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+;
+
+
+/* 
++++++++++++++++++++++++++++++
++         LLAMADAS           +
 +++++++++++++++++++++++++++++
 */
 
+llamadas:
+    TK_ID TK_IPAR parametros_llamada TK_DPAR
+|   TK_ID TK_IPAR TK_DPAR
+;
 
+parametros_llamada:
+    parametros_llamada parametro_llamada
+|   parametro_llamada
+;
+
+parametro_llamada:
+    TK_ID TK_IGUAL expresion
+;
+
+
+/* 
++++++++++++++++++++++++++++++
++           ECHO            +
++++++++++++++++++++++++++++++
+*/
+echo:
+    RW_ECHO expresion
+;
 
 /* 
 +++++++++++++++++++++++++++++
@@ -268,6 +439,7 @@ asignacion_variables:
 expresion:
     primitivo
 |   cast
+|   is_value
 |   aritmeticas
 |   logica
 |   booleanas
@@ -339,3 +511,12 @@ acceso_vectores:
 |   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE
 ;
     
+/* 
++++++++++++++++++++++++++++++
++          IS_VAL           +
++++++++++++++++++++++++++++++
+*/
+is_value:
+    expresion RW_IS tipo
+;
+
