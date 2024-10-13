@@ -171,8 +171,13 @@
 %%
 
 inicio: 
-    instrucciones EOF    
+    entorno_global EOF    
 |   EOF                 
+;
+
+entorno_global:
+    entorno_global global
+|   global
 ;
 
 global:
@@ -180,7 +185,7 @@ global:
 |   declaracion_constantes TK_PUNTO_COMA
 |   declaracion_vectores TK_PUNTO_COMA
 |   declaracion_funciones
-|   declaracion_metodo
+|   declaracion_metodos
 |   ejecutar TK_PUNTO_COMA
 ;
 
@@ -194,8 +199,9 @@ instruccion :
     declaracion_variables TK_PUNTO_COMA 
 |   declaracion_constantes TK_PUNTO_COMA
 |   declaracion_vectores TK_PUNTO_COMA
-|   asignacion_variables TK_PUNTO_COMA
+/*----------------------------ASIGNACION----------------------------*/
 |   incremento_decremento TK_PUNTO_COMA
+|   asignacion_variables TK_PUNTO_COMA
 /*--------------------------SENTENCIAS CONTROL---------------------------*/
 |   sentencias_control
 /*--------------------------SENTENCIAS CICLICAS---------------------------*/
