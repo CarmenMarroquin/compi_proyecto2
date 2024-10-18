@@ -1,0 +1,91 @@
+ejecutar main();
+
+function void main(){
+    echo "***\t\tCalificacion Fase 1\t\t***";
+
+    let factorial: int = 100;
+
+    factorial = factorial - 93;
+
+    // no modificar constantes
+    const cadena: string = "El factorial de ";
+    //cadena = "Esto no debe de funcionar";
+
+    echo "\n----------- While -----------";
+    //while
+    while (factorial > 0) {
+        let i: int = factorial;
+        let fact: int = 1;
+
+        while (i > 0) {
+            fact = fact * i;
+            i--;
+        }
+        echo cadena + factorial + " = " + fact;
+        factorial--;
+    }
+
+    //figura (while e if)
+    echo "\n----------- While con if -----------";
+    const n: int = 7;
+    let i: double = -3 * n / 2;
+    while (i <= n) {
+        let cadenaFigura: string = "";
+        let j: double = -3 * n / 2;
+
+        while (j <= 3 * n / 2) {
+            let absolutoi: double = i;
+            let absolutoj: double = j;
+
+            if (i < 0) {
+                absolutoi = -i;
+            }
+            if (j < 0) {
+                absolutoj = -j;
+            }
+
+            if ((absolutoi + absolutoj) <= n) {
+                cadenaFigura = cadenaFigura + "* ";
+            }
+            if ((absolutoi + absolutoj) > n) {
+                cadenaFigura = cadenaFigura + ". ";
+            }
+            j++;
+        }
+        echo cadenaFigura;
+        i++;
+    }
+
+
+    //break y continue
+    echo "\n----------- Sentencias de Tranferencia -----------";
+    let k: int = 0;
+    while (k < 3) {
+        echo "Entramos al ciclo1 con k = " + k;
+        let l: int = 0;
+        while (l < 3) {
+            echo "Entramos al ciclo2 con l = " + l;
+            if (k == 1 && l == 1) {
+                echo "Hacemos break al ciclo2";
+                break;
+            }
+            if (k == 2 && l == 1) {
+                echo "Hacemos continue al ciclo2";
+                l++;
+                continue;
+            }
+            l++;
+        }
+        if (k == 2 && l == 2) {
+            echo "Hacemos break al ciclo1";
+            break;
+        }
+        k++;
+    }
+
+    echo "\n----------- Casteos -----------";
+    echo "int a double -> "+ cast ( 100 as double);
+    echo "double a int -> "+ cast ( 16.9 as int);
+    echo "int a char -> "+ cast ( 98 as char);
+
+}

@@ -1,11 +1,11 @@
 %{
     // files to import should be the js files
     /*
-    import { LexError, SynError } from "./errors.js" 
+    //import { LexError, SynError } from "./errors.js"
     */
     // use this import while testing
     //const { LexError, SynError } = require("./errors");
-    import {LexError, SynError } from "./errors";
+    import {LexError, SynError } from "./errores";
 %}
 
 %{
@@ -30,7 +30,7 @@
 %%
 
 \s+                                         // spaces ignored
-"--".*                                      // comment inline
+[/][/].*                                      // comment inline
 [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]         // MultiLineComment
 [ \r\t]+
 \n
@@ -61,7 +61,7 @@
 "break"                                return "RW_BREAK";
 "continue"                             return "RW_CONTINUE";
 "return"                               return "RW_RETURN";
-"fuction"                              return "RW_FUNTION";
+"function"                              return "RW_FUNTION";
 "echo"                                 return "RW_ECHO";
 "ejecutar"                             return "RW_EJECUTAR";
 "false"                                return "RW_FALSE";
@@ -89,10 +89,10 @@
 <string>"\\n"                   {controlString+="\n";}
 <string>"\\t"                   {controlString+="\t";}
 <string>"\\\\"                  {controlString+="\\";}
-<string>"\\\'"                  {controlString+="\'";}
+<string>"\\'"                   {controlString+="\'";}
 <string>["]                     {yytext=controlString; this.popState(); return "TK_STRING";}
 
-['][!~\_][']                    return "TK_CHAR";
+[']([!-~])[']                   return "TK_CHAR";
 
 "("                             return "TK_IPAR";
 ")"                             return "TK_DPAR";
@@ -145,20 +145,28 @@
 
 // IMPORTS FOR THE PARSER
 %{
+    import { VarDeclaration, ConstDeclaration, VectorDeclaration } from "./instrucciones/declaration";
+    import { Primitive, Undefined, VariableTypes } from "./herramientas/tipos";
+    import { Vector } from "./expresiones/vector";
+    import { NewVector } from "./expresiones/newVectores";
 
 %}
 
 
 /*---------------------------Operators Precedence---------------------------*/
 //%nonassoc 
+%right "RW_IS"
+%right "RW_IF" "TK_DOS_PUNTOS"
 %left "TK_OR"
 %left "TK_AND"
 %right "TK_NOT"
 %left "TK_MENOR" "TK_MENOR_IGUAL" "TK_MAYOR" "TK_MAYOR_IGUAL" "TK_IGUALACION" "TK_DIFERENCIACION"
-%left "TK_MAS" "TK_MENOS"
-%left "TK_MULTI" "TK_DIV" "TK_MOD"
+%left "TK_SUMA" "TK_RESTA"
+%left "TK_MULTI" "TK_DIV" "TK_MODULO"
 %nonassoc "TK_RAIZ" "TK_POTENCIA"
 %right "UMINUS"
+%right "TK_IPAR" "TK_DPAR"
+%left "TK_ID"
 
 /*to regonize this token we should call it with %prec UMINUS after delcaring a production
 
@@ -171,22 +179,22 @@
 %%
 
 inicio: 
-    entorno_global EOF    
-|   EOF                 
+    entorno_global EOF  { return $1; }   
+|   EOF                 { return null; } 
 ;
 
 entorno_global:
-    entorno_global global
-|   global
+    entorno_global global   { $1.push($2); $$ = $1; }
+|   global                  { $$ = [$1]; }
 ;
 
 global:
-    declaracion_variables TK_PUNTO_COMA
-|   declaracion_constantes TK_PUNTO_COMA
-|   declaracion_vectores TK_PUNTO_COMA
-|   declaracion_funciones
-|   declaracion_metodos
-|   ejecutar TK_PUNTO_COMA
+    declaracion_vectores TK_PUNTO_COMA      { $$ = $1; }
+|   declaracion_variables TK_PUNTO_COMA     { $$ = $1; }
+|   declaracion_constantes TK_PUNTO_COMA    { $$ = $1; }
+|   declaracion_metodos                     { $$ = $1; }
+|   declaracion_funciones                   { $$ = $1; }
+|   ejecutar TK_PUNTO_COMA                  { $$ = $1; }
 ;
 
 instrucciones:
@@ -196,9 +204,9 @@ instrucciones:
 
 instruccion : 
 /*----------------------------DECLARACION----------------------------*/
-    declaracion_variables TK_PUNTO_COMA 
+    declaracion_vectores TK_PUNTO_COMA
+|   declaracion_variables TK_PUNTO_COMA 
 |   declaracion_constantes TK_PUNTO_COMA
-|   declaracion_vectores TK_PUNTO_COMA
 /*----------------------------ASIGNACION----------------------------*/
 |   incremento_decremento TK_PUNTO_COMA
 |   asignacion_variables TK_PUNTO_COMA
@@ -242,17 +250,17 @@ sentencias_control:
 
 // TODO: CHECK IF STATEMENT
 sentencia_if:
-    RW_IF TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
-|   RW_IF TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE RW_ELSE TK_ICORCHETE instrucciones TK_DCORCHETE
-|   RW_IF TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE RW_ELSE sentencia_if
+    RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+|   RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE RW_ELSE TK_ILLAVE instrucciones TK_DLLAVE
+|   RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE RW_ELSE sentencia_if
 ;
 
 
 // TODO: CHECK IF SWITCH STATEMENT WORKS
 sentencia_switch:
-    RW_SWITCH TK_IPAR expresion TK_DPAR TK_ICORCHETE cases case_default TK_DCORCHETE
-|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ICORCHETE cases TK_DCORCHETE
-|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ICORCHETE case_default TK_DCORCHETE
+    RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE cases case_default TK_DLLAVE
+|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE cases TK_DLLAVE
+|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE case_default TK_DLLAVE
 ;
 
 cases:
@@ -277,17 +285,17 @@ case_default:
 sentencias_ciclicas:
     sentencia_while
 |   sentencia_for
-|   sentencia_do
+|   sentencia_do TK_PUNTO_COMA
 |   sentencia_loop
 ;
 
 sentencia_while:
-    RW_WHILE TK_IPAR expresion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+    RW_WHILE TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
 ;
 
 sentencia_for:
-    RW_FOR TK_IPAR declaracion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_IPAR TK_ICORCHETE entorno TK_DCORCHETE
-|   RW_FOR TK_IPAR asignacion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_IPAR TK_ICORCHETE entorno TK_DCORCHETE
+    RW_FOR TK_IPAR declaracion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+|   RW_FOR TK_IPAR asignacion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_DPAR TK_ILLAVE entorno TK_DLLAVE
 ;
 
 actualizacion_for:
@@ -296,11 +304,11 @@ actualizacion_for:
 ;
 
 sentencia_do:
-    RW_DO TK_ICORCHETE entorno TK_DCORCHETE until TK_IPAR expresion TK_DPAR
+    RW_DO TK_ILLAVE entorno TK_DLLAVE RW_UNTIL TK_IPAR expresion TK_DPAR
 ;
 
 sentencia_loop:
-    RW_LOOP TK_ICORCHETE entorno TK_DCORCHETE
+    RW_LOOP TK_ILLAVE entorno TK_DLLAVE
 ;
 
 /*
@@ -320,8 +328,8 @@ entorno:
 +++++++++++++++++++++++++++++
 */
 incremento_decremento:
-    TK_ID TK_MAS TK_MAS
-|   TK_ID TK_MENOS TK_MENOS
+    TK_ID TK_INCREMETO
+|   TK_ID TK_DRECREMENTO
 ;
 
 
@@ -331,41 +339,55 @@ incremento_decremento:
 +++++++++++++++++++++++++++++
 */
 declaracion_variables:
-    RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion 
-|   RW_LET identificadores TK_DOS_PUNTOS tipo 
+    RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion    { $$ = new VarDeclaration($2, $4, $6, @1.first_line, @1.first_column); }
+|   RW_LET identificadores TK_DOS_PUNTOS tipo                       { $$ = new VarDeclaration($2, $4, undefined, @1.first_line, @1.first_column); }
 ;
 
 declaracion_constantes:
-    RW_CONST identificadores TK_DOS_PUNTOS tipo 
-|   RW_CONST identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion 
+    RW_CONST identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion  { $$ = new ConstDeclaration($2, $4, $6, @1.first_line, @1.first_column); }
+|   RW_CONST identificadores TK_DOS_PUNTOS tipo                     { $$ = new ConstDeclaration($2, $4, undefined, @1.first_line, @1.first_column); }
 ;
 
-
-
 identificadores:
-    identificadores TK_COMA TK_ID
-|   TK_ID
+    identificadores TK_COMA TK_ID   { $1.push($3); $$ = $1; }
+|   TK_ID                           { $$ = [$1]; }
 ;  
 
 tipo: 
-    RW_INT
-|   RW_DOUBLE
-|   RW_STRING
-|   RW_BOOL
-|   RW_CHAR
+    RW_INT      { $$ = Primitive.INT; }
+|   RW_DOUBLE   { $$ = Primitive.DOUBLE; }
+|   RW_STRING   { $$ = Primitive.STRING; }
+|   RW_BOOL     { $$ = Primitive.BOOL; }
+|   RW_CHAR     { $$ = Primitive.CHAR; }
+|   RW_NULL     { $$ = Primitive.NULL; }
 ;
 
 declaracion_vectores:
-    RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE 
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE TK_ICORCHETE lista_valores TK_DCORCHETE TK_COMA TK_ICORCHETE lista_valores TK_DCORCHETE TK_DCORCHETE
+    RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vector { $$ = new VectorDeclaration($2, $4, $8, @1.first_line, @1.first_column); }
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vectores   { $$ = new VectorDeclaration($2, $4, $10, @1.first_line, @1.first_column); }
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE  { $$ = new VectorDeclaration($2, $4, $9, @1.first_line, @1.first_column); }
+|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_vectores TK_DCORCHETE { $$ = new VectorDeclaration($2, $4, $11, @1.first_line, @1.first_column); }
 ;
 
+
 lista_valores:
-    lista_valores TK_COMA expresion
-|   expresion
+    lista_valores TK_COMA expresion { $1.values.push($3); $1.length += 1; $$ = $1; }
+|   expresion                       { $$ = new Vector(1, Primitive.NULL, [$1]); }     
 ;
+
+lista_vectores:
+    lista_vectores TK_COMA TK_ICORCHETE lista_valores TK_DCORCHETE  { $1.values.push($4); $1.length += 1; $$ = $1; } 
+|   TK_ICORCHETE lista_valores TK_DCORCHETE                         { $$ = new Vector(1, VariableTypes.ARRAY, [$2]); }
+;
+
+new_vector:
+    RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE   { $$ = new NewVector($3, $5, undefined, @1.first_line, @1.first_column); }
+;
+
+new_vectores:
+    RW_NEW RW_VECTOR tipo TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE   { $$ = new NewVector($3, $5, $8, @1.first_line, @1.first_column); }
+;
+
 
 
 asignacion_variables:
@@ -382,12 +404,12 @@ asignacion_variables:
 */
 
 declaracion_funciones:
-    RW_FUNTION tipo TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
-|   RW_FUNTION tipo TK_ID TK_IPAR TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+    RW_FUNTION tipo TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+|   RW_FUNTION tipo TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE
 ;
 
 parametros_funcion:
-    parametros_funcion, parametro_funcion
+    parametros_funcion TK_COMA parametro_funcion
 |   parametro_funcion
 ;
 
@@ -401,32 +423,10 @@ parametro_funcion:
 +         METODOS           +
 +++++++++++++++++++++++++++++
 */
-delcaracion_metodos:
-    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
-|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ICORCHETE entorno TK_DCORCHETE
+declaracion_metodos:
+    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE
 ;
-
-
-/* 
-+++++++++++++++++++++++++++++
-+         LLAMADAS           +
-+++++++++++++++++++++++++++++
-*/
-
-llamadas:
-    TK_ID TK_IPAR parametros_llamada TK_DPAR
-|   TK_ID TK_IPAR TK_DPAR
-;
-
-parametros_llamada:
-    parametros_llamada parametro_llamada
-|   parametro_llamada
-;
-
-parametro_llamada:
-    TK_ID TK_IGUAL expresion
-;
-
 
 /* 
 +++++++++++++++++++++++++++++
@@ -443,16 +443,16 @@ echo:
 +++++++++++++++++++++++++++++
 */
 expresion:
-    primitivo
-|   cast
-|   is_value
-|   aritmeticas
+    operador_ternario
 |   logica
 |   booleanas
-|   TK_ID
-|   llamar_func
-|   operador_ternario
+|   aritmeticas
+|   llamadas
 |   acceso_vectores
+|   cast
+|   is_value
+|   primitivo
+|   TK_ID
 |   TK_IPAR expresion TK_DPAR
 ;
 
@@ -478,29 +478,18 @@ aritmeticas:
 ;
 
 logica:
-    expresion TK_MENOR_IGUAL expresion
-|   expresion TK_MAYOR_IGUAL expresion
-|   expresion TK_MENOR expresion
-|   expresion TK_MAYOR expresion
-|   expresion TK_IGUALACION expresion
-|   expresion TK_IGUAL expresion
+    expresion TK_IGUALACION expresion
 |   expresion TK_DIFERENCIACION expresion
+|   expresion TK_MAYOR expresion
+|   expresion TK_MENOR expresion
+|   expresion TK_MAYOR_IGUAL expresion
+|   expresion TK_MENOR_IGUAL expresion
 ;
 
 booleanas:
-    expresion TK_OR expresion
-|   expresion TK_AND expresion
-|   expresion TK_NOT expresion
-;
-
-argumentos:
-    TK_ID TK_IGUAL expresion
-|   argumentos TK_COMA TK_ID TK_IGUAL expresion 
-;
-
-llamar_func:
-    TK_ID TK_IPAR argumentos TK_DPAR
-|   TK_ID TK_IPAR TK_DPAR
+    expresion TK_AND expresion
+|   expresion TK_OR expresion
+|   TK_NOT expresion
 ;
 
 cast:
@@ -526,3 +515,18 @@ is_value:
     expresion RW_IS tipo
 ;
 
+/* 
++++++++++++++++++++++++++++++
++         LLAMADAS           +
++++++++++++++++++++++++++++++
+*/
+
+llamadas:
+    TK_ID TK_IPAR parametros_llamada TK_DPAR
+|   TK_ID TK_IPAR TK_DPAR
+;
+
+parametros_llamada:
+    parametros_llamada TK_COMA TK_ID TK_IGUAL expresion
+|   TK_ID TK_IGUAL expresion
+;

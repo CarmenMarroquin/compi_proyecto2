@@ -1,0 +1,55 @@
+ejecutar main();
+
+function void main(){
+    //declaramos las variables que vamos a usar
+    let aritmetica1: double;
+    let aritmetica2: double;
+
+    let relacional3: bool;
+    let relacional4: bool;
+
+    let logica1: bool;
+    let logica3: bool;
+
+    let total: double;
+
+    //validamos las operaciones aritmeticas 
+    aritmetica1 = -1 + 20 - 30 % 10 + 5 * 52 / 26 + 2 ^ 5; //esto debe ser 61
+    aritmetica2 = 2 + 5 - 9 * 8 + 3 / 2 + 6 - 4 * 5 / 5 + 982 * 12 / 100; //56.34
+    let aritmetica3: double = 123 * 6 + 7 - 4 / 2 + 65 - 812 - 42 / 1 + 32 % 2 * 2 ^ 10; // -46
+
+
+    //ahora vamos con las relacionales
+    let relacional1: bool = 12 + 5 * 3 >= 56 * 5 / 21; //true
+    let relacional2: bool = aritmetica1 + aritmetica3 == aritmetica2 * 5; //false
+    relacional3 = (17 * 86 - 25 + 22 / 11) == 20; //false
+    relacional4 = 'a' != 20 * 4; //el ascii de a es 97 y da false
+
+    //y terminamos con las logicas
+    logica1 = !!!!!!!!!!!!!!!!!!(!false) == true; //true
+    let logica2: bool = ((true && true) || ((false && false) && (false == true))) || (!true); //true
+    logica3 = (true || false) && relacional1 && false && false; // falso
+
+    //generamos las salidas
+    echo "***\t\tCalificacion Fase 1\t\t***\n";
+    echo "\'Operaciones aritmeticas\'";
+    echo "Aritmetica1 " + (aritmetica1 == 61);
+    echo "Aritmetica2 " + (aritmetica2 == 56.34);
+    echo "Aritmetica3 " + (aritmetica3 == -46);
+    echo "";
+
+    echo "Operaciones relacionales";
+    echo "Relacional1 " + relacional1;
+    echo "Relacional2 " + relacional2;
+    echo "Relacional3 " + relacional3;
+    echo "Relacional4 " + relacional4;
+
+    echo "\\Operaciones logicas\\";
+    echo "Logica1 " + logica1;
+    echo "Logica2 " + logica2;
+    echo "Logica3 " + logica3;
+
+    echo "";
+    echo "Valor por defecto " + (total == 0);
+   
+}

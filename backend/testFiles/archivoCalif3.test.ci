@@ -1,0 +1,159 @@
+ejecutar main();
+
+function void main(){
+    const var1: int = 49;
+    let punteo: int = 0;
+
+    let mensaje: string = "Voy a ganar compiladores 1";
+
+    let opcion: int = 1;
+    do {
+        switch(opcion) {
+            case 1 :
+                echo "----------- Opcion 1 -----------";
+                // par e impar
+                let numero: int = var1;
+                do {
+                    numero--;
+                    numero--;
+                    if (numero == 0) {
+                        echo "El numero " + var1 + " es par";
+                        break;
+                    }
+                    if (numero == 1 || numero < 0) {
+                        echo "El numero " + var1 + " es impar";
+                        break;
+                    }
+                }
+                until (false);
+            case 2 :
+                echo "----------- Opcion 2 -----------";
+                // corazon for con if else
+                let corazon: string = "";
+                let i: int;
+                const n: int = 10;
+                for (i = cast (-3.1 * n / 2 as int); i <= n; i++) {
+                    //echo "Adentro del for";
+                    corazon = "";
+                    let j: int;
+                    for (j = cast(-3.1 * n / 2 as int); j <= 3 * n / 2; j++) {
+                        let absolutoi: int = i;
+                        let absolutoj: int = j;
+                        if (i < 0) {
+                            absolutoi = -i;
+                        }
+                        if (j < 0) {
+                            absolutoj = -j;
+                        }
+                        if ((absolutoi + absolutoj < n)
+                            || ((-n / 2 - i) * (-n / 2 - i) + (n / 2 - j) * (n / 2 - j) <= n * n / 2)
+                            || ((-n / 2 - i) * (-n / 2 - i) + (-n / 2 - j) * (-n / 2 - j) <= n * n / 2)) {
+                            corazon = corazon + "* ";
+                        } else {
+                            corazon = corazon + ". ";
+                        }
+                    }
+                    echo corazon;
+                }
+            case 3 :
+                echo "----------- Opcion 3 -----------";
+                // reloj de arena
+                const n: int = 8;
+                let reloj: string = "";
+                let i: int;
+                for (i = n; i >= 1; i--) {
+                    let linea: string = "";
+                    let j: int = n;
+                    do {
+                        linea = linea + " ";
+                        j--;
+                    } until (!(j > i));
+                    let k: int = 1;
+                    do {
+                        linea = linea + "*";
+                        k++;
+                    } until (!(k <= (2 * i - 1)));
+                    reloj = reloj + linea + "\n";
+                }
+
+                for (i = 2; i <= n; i++) {
+                    let linea: string = "";
+                    let j: int = n;
+                    do {
+                        linea = linea + " ";
+                        j--;
+                    } until (!(j > i));
+                    let k: int = 1;
+                    do {
+                        linea = linea + "*";
+                        k++;
+                    } until (!(k <= (2 * i - 1)));
+                    reloj = reloj + linea + "\n";
+                }
+                echo reloj;
+            case 4 :
+                echo "----------- Opcion 4 -----------";
+                const n: int = 7;
+                let letraA: string = "";
+                let i: int = 0;
+                for (i = 0; i < n; i++) {
+                    let linea: string = "";
+                    let j: int = 0;
+                    for (j = 0; j < n - i; j++) {
+                        linea = linea + " ";
+                    }
+                    linea = linea + "*";
+                    if (i != 0) {
+                        let j: int = 0;
+                        for (j = 0; j < 2 * i; j++) {
+                            if (i == n / 2 - 0.5) {
+                                linea = linea + "*";
+                            } else {
+                                linea = linea + " ";
+                            }
+                        }
+                        linea = linea + "*";
+                    }
+                    letraA = letraA + linea + "\n";
+                }
+                echo letraA;
+            default :
+                echo "----------- Opcion Default -----------";
+
+                const n: int = 10;
+                let piramide: string = "";
+                let i: int;
+                for (i = 1; i <= n; i++) {
+                    let linea: string = "";
+                    let j: int;
+                    for (j = 1; j <= n - i; j++) {
+                        linea = linea + " ";
+                    }
+                    let k: int;
+                    for (k = 1; k <= 2 * i - 1; k++) {
+                        if (k <= i) {
+                            linea = linea + k;
+                        } else if (k > i && k < 2 * i - 1) {
+                            linea = linea + (2 * i - k);
+                        } else if (k == 2 * i - 1) {
+                            linea = linea + 1;
+                        } else {
+                            break;
+                        }
+
+                        if (k < 2 * i - 1) {
+                            linea = linea + " ";
+                        }
+                    }
+                    piramide = piramide + linea + "\n";
+                }
+                echo piramide;
+        }
+        opcion++;
+        echo "";
+    } until (!(opcion <= 5));
+
+
+    echo "Esta vez si sale compi1 :D";
+    echo "Ustedes pueden :3";
+}

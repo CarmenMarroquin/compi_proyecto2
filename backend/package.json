@@ -10,7 +10,7 @@
     "dev": "ts-node-dev src/index",
     "jison": "jison -t tsconfig.json -n CompInterpreter -n CompInterpreter -o src/analizador/gramatica.ts src/analizador/gramatica.jison",
     "ts-jison": "ts-jison -t typescript -n CompInterpreter -n CompInterpreter -o src/analizador/gramatica.ts src/analizador/gramatica.jison",
-    "ts-jison:debug": "jison -t typescript -n CIParser -n CIParser -o src/analizador/gramatica.ts src/analizador/gramatica.jison --debug"
+    "ts-jison:debug": "ts-jison -t typescript -n CompInterpreter -n CompInterpreter -o src/analizador/gramatica.ts src/analizador/gramatica.jison --debug"
   },
   "dependencies": {
     "@babel/core": "^7.25.2",
