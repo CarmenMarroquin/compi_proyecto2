@@ -88,8 +88,7 @@ export class Relational implements Statement {
 
         return new ReturnType(
             Primitive.BOOL,
-            (leftResult.value !== rightResult.value) &&
-                (leftResult.type !== rightResult.type)
+            leftResult.value !== rightResult.value
         );
     }
 
@@ -107,8 +106,7 @@ export class Relational implements Statement {
 
         return new ReturnType(
             Primitive.BOOL,
-            (leftResult.value === rightResult.value) &&
-                (leftResult.type === rightResult.type)
+            leftResult.value === rightResult.value
         );
     }
 
@@ -123,11 +121,10 @@ export class Relational implements Statement {
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
 
-        if ((leftResult.type === Primitive.INT || leftResult.type === Primitive.DOUBLE) && (rightResult.type === Primitive.INT || rightResult.type === Primitive.DOUBLE)){
-            return new ReturnType(Primitive.BOOL, leftResult.value > rightResult.value);
-        }
-
-        throw new Exception("Type Error", `''>' not supported between instances of ${leftResult.type} and ${rightResult.type}`, this.line, this.column, table.name);
+        return new ReturnType(
+            Primitive.BOOL,
+            leftResult.value > rightResult.value
+        );
     }
 
     _less_operation(table: Environment, tree: Tree): ReturnType {
@@ -141,11 +138,10 @@ export class Relational implements Statement {
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
 
-        if ((leftResult.type === Primitive.INT || leftResult.type === Primitive.DOUBLE) && (rightResult.type === Primitive.INT || rightResult.type === Primitive.DOUBLE)){
-            return new ReturnType(Primitive.BOOL, leftResult.value < rightResult.value);
-        }
-
-        throw new Exception("Type Error", `'<' not supported between instances of ${leftResult.type} and ${rightResult.type}`, this.line, this.column, table.name);
+        return new ReturnType(
+            Primitive.BOOL,
+            leftResult.value < rightResult.value
+        );
     }
 
 
@@ -160,11 +156,10 @@ export class Relational implements Statement {
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
 
-        if ((leftResult.type === Primitive.INT || leftResult.type === Primitive.DOUBLE) && (rightResult.type === Primitive.INT || rightResult.type === Primitive.DOUBLE)){
-            return new ReturnType(Primitive.BOOL, leftResult.value >= rightResult.value);
-        }
-
-        throw new Exception("Type Error", `'>=' not supported between instances of ${leftResult.type} and ${rightResult.type}`, this.line, this.column, table.name);
+        return new ReturnType(
+            Primitive.BOOL,
+            leftResult.value >= rightResult.value
+        );
     }
 
     _leq_operation(table: Environment, tree: Tree): ReturnType {
@@ -178,28 +173,10 @@ export class Relational implements Statement {
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
 
-        if ((leftResult.type === Primitive.INT || leftResult.type === Primitive.DOUBLE) && (rightResult.type === Primitive.INT || rightResult.type === Primitive.DOUBLE)){
-            return new ReturnType(Primitive.BOOL, leftResult.value <= rightResult.value);
-        }
-
-        throw new Exception("Type Error", `'<=' not supported between instances of ${leftResult.type} and ${rightResult.type}`, this.line, this.column, table.name);
-    }
-
-
-    _test_numeric_operation(table: Environment, tree: Tree) {
-        let results: Ret;
-        try{
-            results = this._testOperators(table, tree);
-            this._typeCheckOperator(results.left, results.right, table);
-        } catch(err){
-            throw err;
-        }
-        let leftResult: ReturnType = results.left;
-        let rightResult: ReturnType = results.right;
-
-        if (!((leftResult.type === Primitive.INT || leftResult.type === Primitive.DOUBLE) && (rightResult.type === Primitive.INT || rightResult.type === Primitive.DOUBLE))){
-            throw new Exception(rightResult.value.type, rightResult.value.description, this.line, rightResult.value.column, table.name);
-        }
+        return new ReturnType(
+            Primitive.BOOL,
+            leftResult.value <= rightResult.value
+        );
     }
 
     _testOperators(table: Environment, tree: Tree): Ret {

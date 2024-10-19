@@ -146,7 +146,7 @@
 // IMPORTS FOR THE PARSER
 %{
     import { VarDeclaration, ConstDeclaration, VectorDeclaration } from "./instrucciones/declaration";
-    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator } from "./herramientas/tipos";
+    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator, LogicalOperator } from "./herramientas/tipos";
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
     import { Cast } from "./expresiones/cast";
@@ -156,6 +156,7 @@
     import { Relational } from "./expresiones/relational";
     import { Arithmetic } from "./expresiones/arithmetic";
     import { Logical } from "./expresiones/logical";
+    import { TernaryOperator } from "./expresiones/ternaryOperator";
 
 %}
 
@@ -495,9 +496,9 @@ logica:
 ;
 
 booleanas:
-    expresion TK_AND expresion
-|   expresion TK_OR expresion
-|   TK_NOT expresion
+    expresion TK_AND expresion  {$$ = new  Logical($1, LogicalOperator.AND, $3, @1.first_line, @1.first_column); }
+|   expresion TK_OR expresion   {$$ = new  Logical($1, LogicalOperator.OR, $3, @1.first_line, @1.first_column); }
+|   TK_NOT expresion            {$$ = new  Logical(undefined, LogicalOperator.NOT, $2, @1.first_line, @1.first_column); }
 ;
 
 cast:
@@ -505,7 +506,7 @@ cast:
 ;
 
 operador_ternario:
-    RW_IF TK_IPAR expresion TK_DPAR expresion TK_DOS_PUNTOS expresion
+    RW_IF TK_IPAR expresion TK_DPAR expresion TK_DOS_PUNTOS expresion   { $$ = new TernaryOperator($3, $5, $7, @1.first_line, @1.first_column); }
 ;
 
 

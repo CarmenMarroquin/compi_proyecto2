@@ -24,7 +24,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     let controlString = "";
 
     import { VarDeclaration, ConstDeclaration, VectorDeclaration } from "./instrucciones/declaration";
-    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator } from "./herramientas/tipos";
+    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator, LogicalOperator } from "./herramientas/tipos";
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
     import { Cast } from "./expresiones/cast";
@@ -33,6 +33,8 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import { VectorAccess } from "./expresiones/vectorAccess";
     import { Relational } from "./expresiones/relational";
     import { Arithmetic } from "./expresiones/arithmetic";
+    import { Logical } from "./expresiones/logical";
+    import { TernaryOperator } from "./expresiones/ternaryOperator";
 
 
 export class CompInterpreterParser extends JisonParser implements JisonParserApi {
@@ -203,8 +205,20 @@ break;
 case 120:
 this.$ = new Relational($$[$0-2], RelationalOperator.LEQ, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
 break;
+case 121:
+this.$ = new  Logical($$[$0-2], LogicalOperator.AND, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 122:
+this.$ = new  Logical($$[$0-2], LogicalOperator.OR, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 123:
+this.$ = new  Logical(undefined, LogicalOperator.NOT, $$[$0], _$[$0-1].first_line, _$[$0-1].first_column); 
+break;
 case 124:
  this.$ = new Cast($$[$0-3], $$[$0-1], _$[$0-5].first_line, _$[$0-5].first_column); 
+break;
+case 125:
+ this.$ = new TernaryOperator($$[$0-4], $$[$0-2], $$[$0], _$[$0-6].first_line, _$[$0-6].first_column); 
 break;
 case 126:
  this.$ = new VectorAccess($$[$0-3], $$[$0-1], undefined, _$[$0-3].first_line, _$[$0-3].first_column); 
