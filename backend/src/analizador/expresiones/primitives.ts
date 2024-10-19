@@ -5,7 +5,7 @@ import { Primitive } from "../herramientas/tipos";
 import Tree from "../herramientas/arbol";
 
 
-export class PrimitiveVar implements Statement {
+export class PrimitiveVal implements Statement {
     public value: any;
     public type: Primitive;
     public line: number;

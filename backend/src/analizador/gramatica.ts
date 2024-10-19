@@ -27,6 +27,10 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import { Primitive, Undefined, VariableTypes } from "./herramientas/tipos";
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
+    import { Cast } from "./expresiones/cast";
+    import { PrimitiveVal } from "./expresiones/primitives";
+    import { CallVar } from "./expresiones/callVar";
+    import { VectorAccess } from "./expresiones/vectorAccess"
 
 
 export class CompInterpreterParser extends JisonParser implements JisonParserApi {
@@ -62,10 +66,10 @@ break;
 case 4: case 60:
  this.$ = [$$[$0]]; 
 break;
-case 5: case 6: case 7: case 10:
+case 5: case 6: case 7: case 10: case 13: case 14: case 15: case 16: case 99:
  this.$ = $$[$0-1]; 
 break;
-case 8: case 9:
+case 8: case 9: case 89: case 90: case 91: case 92: case 93: case 94: case 95: case 96: case 97:
  this.$ = $$[$0]; 
 break;
 case 52:
@@ -133,6 +137,36 @@ case 75:
 break;
 case 76:
  this.$ = new NewVector($$[$0-6], $$[$0-4], $$[$0-1], _$[$0-8].first_line, _$[$0-8].first_column); 
+break;
+case 98:
+ this.$ = new CallVar($$[$0], _$[$0].first_line, _$[$0].first_column); 
+break;
+case 100:
+ this.$ = new PrimitiveVal($$[$0], Primitive.INT, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 101:
+ this.$ = new PrimitiveVal($$[$0], Primitive.STRING, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 102:
+ this.$ = new PrimitiveVal($$[$0], Primitive.DOUBLE, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 103:
+ this.$ = new PrimitiveVal($$[$0], Primitive.CHAR, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 104:
+ this.$ = new PrimitiveVal($$[$0], Primitive.NULL, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 105: case 106:
+ this.$ = new PrimitiveVal($$[$0], Primitive.BOOL, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 124:
+ this.$ = new Cast($$[$0-3], $$[$0-1], _$[$0-5].first_line, _$[$0-5].first_column); 
+break;
+case 126:
+ this.$ = new VectorAccess($$[$0-3], $$[$0-1], undefined, _$[$0-3].first_line, _$[$0-3].first_column); 
+break;
+case 127:
+ this.$ = new VectorAccess($$[$0-6], $$[$0-4], $$[$0-1], _$[$0-6].first_line, _$[$0-6].first_column); 
 break;
         }
     }

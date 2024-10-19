@@ -149,6 +149,10 @@
     import { Primitive, Undefined, VariableTypes } from "./herramientas/tipos";
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
+    import { Cast } from "./expresiones/cast";
+    import { PrimitiveVal } from "./expresiones/primitives";
+    import { CallVar } from "./expresiones/callVar";
+    import { VectorAccess } from "./expresiones/vectorAccess"
 
 %}
 
@@ -204,12 +208,12 @@ instrucciones:
 
 instruccion : 
 /*----------------------------DECLARACION----------------------------*/
-    declaracion_vectores TK_PUNTO_COMA
-|   declaracion_variables TK_PUNTO_COMA 
-|   declaracion_constantes TK_PUNTO_COMA
+    declaracion_vectores TK_PUNTO_COMA      { $$ = $1; }
+|   declaracion_variables TK_PUNTO_COMA     { $$ = $1; } 
+|   declaracion_constantes TK_PUNTO_COMA    { $$ = $1; }
 /*----------------------------ASIGNACION----------------------------*/
-|   incremento_decremento TK_PUNTO_COMA
-|   asignacion_variables TK_PUNTO_COMA
+|   incremento_decremento TK_PUNTO_COMA     { $$ = $1; }
+|   asignacion_variables TK_PUNTO_COMA      
 /*--------------------------SENTENCIAS CONTROL---------------------------*/
 |   sentencias_control
 /*--------------------------SENTENCIAS CICLICAS---------------------------*/
@@ -327,6 +331,7 @@ entorno:
 +        INCRE DECRE        +
 +++++++++++++++++++++++++++++
 */
+// TODO
 incremento_decremento:
     TK_ID TK_INCREMETO
 |   TK_ID TK_DRECREMENTO
@@ -443,27 +448,27 @@ echo:
 +++++++++++++++++++++++++++++
 */
 expresion:
-    operador_ternario
-|   logica
-|   booleanas
-|   aritmeticas
-|   llamadas
-|   acceso_vectores
-|   cast
-|   is_value
-|   primitivo
-|   TK_ID
-|   TK_IPAR expresion TK_DPAR
+    operador_ternario           { $$ = $1; }
+|   logica                      { $$ = $1; }
+|   booleanas                   { $$ = $1; }
+|   aritmeticas                 { $$ = $1; }
+|   llamadas                    { $$ = $1; }
+|   acceso_vectores             { $$ = $1; }
+|   cast                        { $$ = $1; }
+|   is_value                    { $$ = $1; }
+|   primitivo                   { $$ = $1; }
+|   TK_ID                       { $$ = new CallVar($1, @1.first_line, @1.first_column); }
+|   TK_IPAR expresion TK_DPAR   { $$ = $2; }
 ;
 
 primitivo:
-    TK_INT
-|   TK_STRING
-|   TK_DOUBLE
-|   TK_CHAR
-|   RW_NULL
-|   RW_FALSE
-|   RW_TRUE
+    TK_INT      { $$ = new PrimitiveVal($1, Primitive.INT, @1.first_line, @1.first_column); }
+|   TK_STRING   { $$ = new PrimitiveVal($1, Primitive.STRING, @1.first_line, @1.first_column); }
+|   TK_DOUBLE   { $$ = new PrimitiveVal($1, Primitive.DOUBLE, @1.first_line, @1.first_column); }
+|   TK_CHAR     { $$ = new PrimitiveVal($1, Primitive.CHAR, @1.first_line, @1.first_column); }
+|   RW_NULL     { $$ = new PrimitiveVal($1, Primitive.NULL, @1.first_line, @1.first_column); }
+|   RW_FALSE    { $$ = new PrimitiveVal($1, Primitive.BOOL, @1.first_line, @1.first_column); }
+|   RW_TRUE     { $$ = new PrimitiveVal($1, Primitive.BOOL, @1.first_line, @1.first_column); }
 ;
 
 aritmeticas:
@@ -493,7 +498,7 @@ booleanas:
 ;
 
 cast:
-    RW_CAST TK_IPAR expresion RW_AS tipo TK_DPAR 
+    RW_CAST TK_IPAR expresion RW_AS tipo TK_DPAR    { $$ = new Cast($3, $5, @1.first_line, @1.first_column); }
 ;
 
 operador_ternario:
@@ -502,8 +507,8 @@ operador_ternario:
 
 
 acceso_vectores:
-    TK_ID TK_ICORCHETE expresion TK_DCORCHETE
-|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE
+    TK_ID TK_ICORCHETE expresion TK_DCORCHETE   { $$ = new VectorAccess($1, $3, undefined, @1.first_line, @1.first_column); }
+|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE   { $$ = new VectorAccess($1, $3, $6, @1.first_line, @1.first_column); }
 ;
     
 /* 
