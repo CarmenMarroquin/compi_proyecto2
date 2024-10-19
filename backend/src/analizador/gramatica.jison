@@ -157,6 +157,7 @@
     import { Arithmetic } from "./expresiones/arithmetic";
     import { Logical } from "./expresiones/logical";
     import { TernaryOperator } from "./expresiones/ternaryOperator";
+    import { IsFunction } from "./expresiones/isFunction";
 
 %}
 
@@ -521,7 +522,7 @@ acceso_vectores:
 +++++++++++++++++++++++++++++
 */
 is_value:
-    expresion RW_IS tipo
+    expresion RW_IS tipo    { $$ = new IsFunction($1, $3, @1.first_line, @1.first_column); }
 ;
 
 /* 
