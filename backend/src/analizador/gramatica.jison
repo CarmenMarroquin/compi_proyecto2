@@ -146,13 +146,16 @@
 // IMPORTS FOR THE PARSER
 %{
     import { VarDeclaration, ConstDeclaration, VectorDeclaration } from "./instrucciones/declaration";
-    import { Primitive, Undefined, VariableTypes } from "./herramientas/tipos";
+    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator } from "./herramientas/tipos";
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
     import { Cast } from "./expresiones/cast";
     import { PrimitiveVal } from "./expresiones/primitives";
     import { CallVar } from "./expresiones/callVar";
-    import { VectorAccess } from "./expresiones/vectorAccess"
+    import { VectorAccess } from "./expresiones/vectorAccess";
+    import { Relational } from "./expresiones/relational";
+    import { Arithmetic } from "./expresiones/arithmetic";
+    import { Logical } from "./expresiones/logical";
 
 %}
 
@@ -472,23 +475,23 @@ primitivo:
 ;
 
 aritmeticas:
-    expresion TK_SUMA expresion
-|   expresion TK_RESTA expresion
-|   expresion TK_MULTI expresion
-|   expresion TK_DIV expresion
-|   expresion TK_POTENCIA expresion
-|   expresion TK_RAIZ expresion
-|   expresion TK_MODULO expresion
-|   TK_RESTA expresion %prec UMINUS
+    expresion TK_SUMA expresion         {$$ = new Arithmetic($1, ArithmeticOperator.PLUS, $3, @1.first_line, @1.first_column); }
+|   expresion TK_RESTA expresion        {$$ = new Arithmetic($1, ArithmeticOperator.MINUS, $3, @1.first_line, @1.first_column); }
+|   expresion TK_MULTI expresion        {$$ = new Arithmetic($1, ArithmeticOperator.MULT, $3, @1.first_line, @1.first_column); }
+|   expresion TK_DIV expresion          {$$ = new Arithmetic($1, ArithmeticOperator.DIV, $3, @1.first_line, @1.first_column); }
+|   expresion TK_POTENCIA expresion     {$$ = new Arithmetic($1, ArithmeticOperator.POWER, $3, @1.first_line, @1.first_column); }
+|   expresion TK_RAIZ expresion         {$$ = new Arithmetic($1, ArithmeticOperator.ROOT, $3, @1.first_line, @1.first_column); }
+|   expresion TK_MODULO expresion       {$$ = new Arithmetic($1, ArithmeticOperator.MOD, $3, @1.first_line, @1.first_column); }
+|   TK_RESTA expresion %prec UMINUS     {$$ = new Arithmetic(undefined, ArithmeticOperator.UMINUS, $2, @1.first_line, @1.first_column); }
 ;
 
 logica:
-    expresion TK_IGUALACION expresion
-|   expresion TK_DIFERENCIACION expresion
-|   expresion TK_MAYOR expresion
-|   expresion TK_MENOR expresion
-|   expresion TK_MAYOR_IGUAL expresion
-|   expresion TK_MENOR_IGUAL expresion
+    expresion TK_IGUALACION expresion       {$$ = new Relational($1, RelationalOperator.EQ, $3, @1.first_line, @1.first_column); }
+|   expresion TK_DIFERENCIACION expresion   {$$ = new Relational($1, RelationalOperator.NEQ, $3, @1.first_line, @1.first_column); }
+|   expresion TK_MAYOR expresion            {$$ = new Relational($1, RelationalOperator.GREATER, $3, @1.first_line, @1.first_column); }
+|   expresion TK_MENOR expresion            {$$ = new Relational($1, RelationalOperator.LESS, $3, @1.first_line, @1.first_column); }
+|   expresion TK_MAYOR_IGUAL expresion      {$$ = new Relational($1, RelationalOperator.GEQ, $3, @1.first_line, @1.first_column); }
+|   expresion TK_MENOR_IGUAL expresion      {$$ = new Relational($1, RelationalOperator.LEQ, $3, @1.first_line, @1.first_column); }
 ;
 
 booleanas:

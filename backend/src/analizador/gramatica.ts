@@ -24,13 +24,15 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     let controlString = "";
 
     import { VarDeclaration, ConstDeclaration, VectorDeclaration } from "./instrucciones/declaration";
-    import { Primitive, Undefined, VariableTypes } from "./herramientas/tipos";
+    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator } from "./herramientas/tipos";
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
     import { Cast } from "./expresiones/cast";
     import { PrimitiveVal } from "./expresiones/primitives";
     import { CallVar } from "./expresiones/callVar";
-    import { VectorAccess } from "./expresiones/vectorAccess"
+    import { VectorAccess } from "./expresiones/vectorAccess";
+    import { Relational } from "./expresiones/relational";
+    import { Arithmetic } from "./expresiones/arithmetic";
 
 
 export class CompInterpreterParser extends JisonParser implements JisonParserApi {
@@ -158,6 +160,48 @@ case 104:
 break;
 case 105: case 106:
  this.$ = new PrimitiveVal($$[$0], Primitive.BOOL, _$[$0].first_line, _$[$0].first_column); 
+break;
+case 107:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.PLUS, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 108:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.MINUS, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 109:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.MULT, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 110:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.DIV, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 111:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.POWER, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 112:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.ROOT, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 113:
+this.$ = new Arithmetic($$[$0-2], ArithmeticOperator.MOD, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 114:
+this.$ = new Arithmetic(undefined, ArithmeticOperator.UMINUS, $$[$0], _$[$0-1].first_line, _$[$0-1].first_column); 
+break;
+case 115:
+this.$ = new Relational($$[$0-2], RelationalOperator.EQ, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 116:
+this.$ = new Relational($$[$0-2], RelationalOperator.NEQ, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 117:
+this.$ = new Relational($$[$0-2], RelationalOperator.GREATER, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 118:
+this.$ = new Relational($$[$0-2], RelationalOperator.LESS, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 119:
+this.$ = new Relational($$[$0-2], RelationalOperator.GEQ, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 120:
+this.$ = new Relational($$[$0-2], RelationalOperator.LEQ, $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
 break;
 case 124:
  this.$ = new Cast($$[$0-3], $$[$0-1], _$[$0-5].first_line, _$[$0-5].first_column); 
