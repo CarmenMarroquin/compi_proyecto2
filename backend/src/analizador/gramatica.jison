@@ -172,10 +172,7 @@
     import { Logical } from "./expresiones/logical";
     import { TernaryOperator } from "./expresiones/ternaryOperator";
     import { IsFunction } from "./expresiones/isFunction";
-
-
-
-
+    import { CallFunc } from "./expresiones/callFunc";
 %}
 
 
@@ -258,8 +255,8 @@ instruccion :
 +++++++++++++++++++++++++++++
 */
 ejecutar:
-    RW_EJECUTAR TK_ID TK_IPAR TK_DPAR
-|   RW_EJECUTAR TK_ID TK_IPAR parametros_llamada TK_DPAR
+    RW_EJECUTAR TK_ID TK_IPAR TK_DPAR   { $$ = new CallFunc($2, [], @1.first_line, @1.first_column); }
+|   RW_EJECUTAR TK_ID TK_IPAR parametros_llamada TK_DPAR    { $$ = new CallFunc($2, $4, @1.first_line, @1.first_column); }
 ;
 
 
@@ -549,11 +546,11 @@ is_value:
 */
 
 llamadas:
-    TK_ID TK_IPAR parametros_llamada TK_DPAR
-|   TK_ID TK_IPAR TK_DPAR
+    TK_ID TK_IPAR parametros_llamada TK_DPAR    { $$ = new CallFunc($1, $3, @1.first_line, @1.first_column); }
+|   TK_ID TK_IPAR TK_DPAR                       { $$ = new CallFunc($1, [], @1.first_line, @1.first_column); }
 ;
 
 parametros_llamada:
-    parametros_llamada TK_COMA TK_ID TK_IGUAL expresion
-|   TK_ID TK_IGUAL expresion
+    parametros_llamada TK_COMA TK_ID TK_IGUAL expresion { $1.push({id: $3, val: $5}); $$ = $1; }
+|   TK_ID TK_IGUAL expresion    { $$ = [{id: $1, val: $3}]; }
 ;

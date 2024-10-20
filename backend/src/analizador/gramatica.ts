@@ -50,10 +50,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import { Logical } from "./expresiones/logical";
     import { TernaryOperator } from "./expresiones/ternaryOperator";
     import { IsFunction } from "./expresiones/isFunction";
-
-
-
-
+    import { CallFunc } from "./expresiones/callFunc";
 
 export class CompInterpreterParser extends JisonParser implements JisonParserApi {
     $?: any;
@@ -105,6 +102,12 @@ case 22:
 break;
 case 23:
  this.$ = new Return(undefined, _$[$0-1].first_line, _$[$0-1].first_column); 
+break;
+case 26:
+ this.$ = new CallFunc($$[$0-2], [], _$[$0-3].first_line, _$[$0-3].first_column); 
+break;
+case 27:
+ this.$ = new CallFunc($$[$0-3], $$[$0-1], _$[$0-4].first_line, _$[$0-4].first_column); 
 break;
 case 30:
  $$[$0-1].envName = "if_env"; this.$ = new If($$[$0-4], $$[$0-1], undefined, _$[$0-6].first_line, _$[$0-6].first_column); 
@@ -330,6 +333,18 @@ case 127:
 break;
 case 128:
  this.$ = new IsFunction($$[$0-2], $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 129:
+ this.$ = new CallFunc($$[$0-3], $$[$0-1], _$[$0-3].first_line, _$[$0-3].first_column); 
+break;
+case 130:
+ this.$ = new CallFunc($$[$0-2], [], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 131:
+ $$[$0-4].push({id: $$[$0-2], val: $$[$0]}); this.$ = $$[$0-4]; 
+break;
+case 132:
+ this.$ = [{id: $$[$0-2], val: $$[$0]}]; 
 break;
         }
     }
