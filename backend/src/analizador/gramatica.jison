@@ -248,7 +248,7 @@ instruccion :
 /*----------------------------FUNCIONES----------------------------*/
 //|   declaracion_funciones TK_PUNTO_COMA
 //|   delcaracion_metodos
-|   llamadas TK_PUNTO_COMA
+|   llamadas TK_PUNTO_COMA  { $$ = $1; }
 |   echo TK_PUNTO_COMA      { $$ = $1; }
 ;
 
@@ -451,8 +451,8 @@ parametro_funcion:
 +++++++++++++++++++++++++++++
 */
 declaracion_metodos:
-    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE { $$ = new Function(undefined, $3, $5, $8, @1.first_line, @1.first_column); }
-|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE                    { $$ = new Function(undefined, $3, [], $7, @1.first_line, @1.first_column); }
+    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE { $$ = new Method(undefined, $3, $5, $8, @1.first_line, @1.first_column); }
+|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE                    { $$ = new Method(undefined, $3, [], $7, @1.first_line, @1.first_column); }
 ;
 
 /* 

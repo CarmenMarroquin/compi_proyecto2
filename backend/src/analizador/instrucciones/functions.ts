@@ -105,7 +105,7 @@ export class NativeFunc extends Func {
 
 
 export class Method extends Func {
-    constructor(retType: Primitive, id: string, args: Array<VarArgs>, block: CodeBlock, line: number, column: number,){
+    constructor(retType: Primitive | undefined, id: string, args: Array<VarArgs>, block: CodeBlock, line: number, column: number,){
         super(retType, id, args, block, line, column);
     }
 

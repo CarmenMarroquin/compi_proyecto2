@@ -36,6 +36,8 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import { For } from "./instrucciones/for";
     import { DoUntil } from "./instrucciones/do_until";
     import { Break, Continue, Return } from "./instrucciones/transferOp";
+    import { Echo } from "./instrucciones/echo";
+    import { Function, Method } from "./instrucciones/functions";
 
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
@@ -83,10 +85,10 @@ break;
 case 3: case 11: case 36:
  $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 4: case 12: case 37: case 60:
+case 4: case 12: case 37: case 60: case 83:
  this.$ = [$$[$0]]; 
 break;
-case 5: case 6: case 7: case 10: case 13: case 14: case 15: case 16: case 17: case 42: case 99:
+case 5: case 6: case 7: case 10: case 13: case 14: case 15: case 16: case 17: case 24: case 25: case 42: case 99:
  this.$ = $$[$0-1]; 
 break;
 case 8: case 9: case 18: case 19: case 28: case 29: case 39: case 40: case 41: case 43: case 47: case 48: case 89: case 90: case 91: case 92: case 93: case 94: case 95: case 96: case 97:
@@ -161,7 +163,7 @@ break;
 case 58:
  this.$ = new ConstDeclaration($$[$0-2], $$[$0], undefined, _$[$0-3].first_line, _$[$0-3].first_column); 
 break;
-case 59:
+case 59: case 82:
  $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
 case 61:
@@ -220,6 +222,27 @@ case 78:
 break;
 case 79:
  this.$ = new SetVar($$[$0-2], $$[$0], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 80:
+ this.$ = new Function($$[$0-7], $$[$0-6], $$[$0-4], $$[$0-1], _$[$0-8].first_line, _$[$0-8].first_column); 
+break;
+case 81:
+ this.$ = new Function($$[$0-6], $$[$0-5], [], $$[$0-1], _$[$0-7].first_line, _$[$0-7].first_column); 
+break;
+case 84:
+ this.$ = {id: $$[$0-4], type: $$[$0-2], deft: $$[$0]}; 
+break;
+case 85:
+ this.$ = {id: $$[$0-2], type: $$[$0]}; 
+break;
+case 86:
+ this.$ = new Method(undefined, $$[$0-6], $$[$0-4], $$[$0-1], _$[$0-8].first_line, _$[$0-8].first_column); 
+break;
+case 87:
+ this.$ = new Method(undefined, $$[$0-5], [], $$[$0-1], _$[$0-7].first_line, _$[$0-7].first_column); 
+break;
+case 88:
+ this.$ = new Echo($$[$0], _$[$0-1].first_line, _$[$0-1].first_column); 
 break;
 case 98:
  this.$ = new CallVar($$[$0], _$[$0].first_line, _$[$0].first_column); 
