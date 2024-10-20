@@ -66,6 +66,10 @@ export enum Any {
     ANY = "anyvar"
 }
 
+export enum IncDec {
+    INC = "++",
+    DEC = "--"
+}
 
 export type Undefined = undefined;
 

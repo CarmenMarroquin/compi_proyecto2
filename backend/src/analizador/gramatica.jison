@@ -145,8 +145,16 @@
 
 // IMPORTS FOR THE PARSER
 %{
+    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator, LogicalOperator, IncDec } from "./herramientas/tipos";
+
     import { VarDeclaration, ConstDeclaration, VectorDeclaration } from "./instrucciones/declaration";
-    import { Primitive, Undefined, VariableTypes, ArithmeticOperator, RelationalOperator, LogicalOperator } from "./herramientas/tipos";
+    import { SetVar } from "./instrucciones/setVar";
+    import { SetVector } from "./instrucciones/setVector";
+    import { IncDecVar } from "./instrucciones/incDec";
+    import { CodeBlock } from "./instrucciones/codeBlock";
+    import { If } from "./instrucciones/if";
+    import { Switch } from "./instrucciones/switch";
+
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
     import { Cast } from "./expresiones/cast";
@@ -158,6 +166,9 @@
     import { Logical } from "./expresiones/logical";
     import { TernaryOperator } from "./expresiones/ternaryOperator";
     import { IsFunction } from "./expresiones/isFunction";
+
+
+
 
 %}
 
@@ -207,8 +218,8 @@ global:
 ;
 
 instrucciones:
-    instrucciones instruccion 
-|   instruccion
+    instrucciones instruccion   { $1.push($2); $$ = $1; }
+|   instruccion                 { $$ = [$1]; }
 ;
 
 instruccion : 
@@ -217,12 +228,12 @@ instruccion :
 |   declaracion_variables TK_PUNTO_COMA     { $$ = $1; } 
 |   declaracion_constantes TK_PUNTO_COMA    { $$ = $1; }
 /*----------------------------ASIGNACION----------------------------*/
+|   asignacion_variables TK_PUNTO_COMA      { $$ = $1; }
 |   incremento_decremento TK_PUNTO_COMA     { $$ = $1; }
-|   asignacion_variables TK_PUNTO_COMA      
 /*--------------------------SENTENCIAS CONTROL---------------------------*/
-|   sentencias_control
+|   sentencias_control  { $$ = $1; }
 /*--------------------------SENTENCIAS CICLICAS---------------------------*/
-|   sentencias_ciclicas
+|   sentencias_ciclicas { $$ = $1; }
 /*----------------------------TRANSFERENCIA----------------------------*/
 |   RW_BREAK TK_PUNTO_COMA
 |   RW_CONTINUE TK_PUNTO_COMA
@@ -253,36 +264,36 @@ ejecutar:
 +++++++++++++++++++++++++++++
 */
 sentencias_control:
-    sentencia_if
-|   sentencia_switch
+    sentencia_if        { $$ = $1; }
+|   sentencia_switch    { $$ = $1; }
 ;
 
 // TODO: CHECK IF STATEMENT
 sentencia_if:
-    RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
-|   RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE RW_ELSE TK_ILLAVE instrucciones TK_DLLAVE
-|   RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE RW_ELSE sentencia_if
+    RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE { $6.envName = "if_env"; $$ = new If($3, $6, undefined, @1.first_line, @1.first_column); }
+|   RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE RW_ELSE TK_ILLAVE entorno TK_DLLAVE { $6.envName = "if_env"; $10.envName = "else_env"; $$ = new If($3, $6, $10, @1.first_line, @1.first_column); }
+|   RW_IF TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE RW_ELSE sentencia_if    { $6.envName = "if_env"; $$ = new If($3, $6, $9, @1.first_line, @1.first_column); }
 ;
 
 
 // TODO: CHECK IF SWITCH STATEMENT WORKS
 sentencia_switch:
-    RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE cases case_default TK_DLLAVE
-|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE cases TK_DLLAVE
-|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE case_default TK_DLLAVE
+    RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE cases case_default TK_DLLAVE  { $$ = new Switch($3, $6, $7, @1.first_line, @1.first_column); }
+|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE cases TK_DLLAVE               { $$ = new Switch($3, $6, undefined, @1.first_line, @1.first_column); }
+|   RW_SWITCH TK_IPAR expresion TK_DPAR TK_ILLAVE case_default TK_DLLAVE        { $$ = new Switch($3, undefined, $6, @1.first_line, @1.first_column); }
 ;
 
 cases:
-    cases case
-|   case
+    cases case  { $1.push($2); $$ = $1; }
+|   case        { $$ = [$1]; }
 ;
 
 case:
-    RW_CASE expresion TK_DOS_PUNTOS entorno
+    RW_CASE expresion TK_DOS_PUNTOS entorno { $$ = {cond: $2, then: $4}; }
 ;
 
 case_default:
-    RW_DEFAULT TK_DOS_PUNTOS entorno
+    RW_DEFAULT TK_DOS_PUNTOS entorno    { $$ = $3; }
 ;
 
 
@@ -327,7 +338,7 @@ sentencia_loop:
 */
 
 entorno:
-    instrucciones
+    instrucciones   { $$ = new CodeBlock($1, @1.first_line, @1.first_column); }
 |                   { $$ = undefined; }
 ;
 
@@ -338,8 +349,8 @@ entorno:
 */
 // TODO
 incremento_decremento:
-    TK_ID TK_INCREMETO
-|   TK_ID TK_DRECREMENTO
+    TK_ID TK_INCREMETO      { $$ = new IncDecVar($1, IncDec.INC, @1.first_line, @1.first_column); }
+|   TK_ID TK_DRECREMENTO    { $$ = new IncDecVar($1, IncDec.DEC, @1.first_line, @1.first_column); }
 ;
 
 
@@ -401,9 +412,9 @@ new_vectores:
 
 
 asignacion_variables:
-    TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion
-|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion
-|   TK_ID TK_IGUAL expresion
+    TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion    { $$ = new SetVector($1, $3, undefined, $6, @1.first_line, @1.first_column); }    
+|   TK_ID TK_ICORCHETE expresion TK_DCORCHETE TK_ICORCHETE expresion TK_DCORCHETE TK_IGUAL expresion    { $$ = new SetVector($1, $3, $6, $9, @1.first_line, @1.first_column); }
+|   TK_ID TK_IGUAL expresion    { $$ = new SetVar($1, $3, @1.first_line, @1.first_column); }
 ;
 
 

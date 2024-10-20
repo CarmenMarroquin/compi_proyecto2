@@ -13,6 +13,8 @@ import ReturnType from "./returnType";
 export function createGlobalEnv() {
     const env = new Environment();
     // Define a native builtin functions
+    // TODO DO NATIVE FUNCTIONS
+    /*
     env.setSymbol(new Symbol(
         "lower",
         Functions.NATIVE_FN,
@@ -41,6 +43,7 @@ export function createGlobalEnv() {
             0,0
         ), 0, 0, env
     ));
+    */
 
     // TODO round function
     /*
@@ -61,7 +64,7 @@ export function createGlobalEnv() {
     */
 
 
-
+    /*
     env.setSymbol(new Symbol(
         "len",
         Functions.NATIVE_FN,
@@ -109,6 +112,7 @@ export function createGlobalEnv() {
             0,0
         ), 0, 0, env
     ));
+    */
 
     return env;
 }
