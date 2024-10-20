@@ -154,6 +154,10 @@
     import { CodeBlock } from "./instrucciones/codeBlock";
     import { If } from "./instrucciones/if";
     import { Switch } from "./instrucciones/switch";
+    import { While } from "./instrucciones/while";
+    import { For } from "./instrucciones/for";
+    import { DoUntil } from "./instrucciones/do_until";
+    import { Break, Continue, Return } from "./instrucciones/transferOp";
 
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
@@ -235,10 +239,10 @@ instruccion :
 /*--------------------------SENTENCIAS CICLICAS---------------------------*/
 |   sentencias_ciclicas { $$ = $1; }
 /*----------------------------TRANSFERENCIA----------------------------*/
-|   RW_BREAK TK_PUNTO_COMA
-|   RW_CONTINUE TK_PUNTO_COMA
-|   RW_RETURN expresion TK_PUNTO_COMA
-|   RW_RETURN TK_PUNTO_COMA
+|   RW_BREAK TK_PUNTO_COMA              { $$ = new Break(@1.first_line, @1.first_column); }
+|   RW_CONTINUE TK_PUNTO_COMA           { $$ = new Continue(@1.first_line, @1.first_column); }
+|   RW_RETURN expresion TK_PUNTO_COMA   { $$ = new Return($2, @1.first_line, @1.first_column); }
+|   RW_RETURN TK_PUNTO_COMA             { $$ = new Return(undefined, @1.first_line, @1.first_column); }
 /*----------------------------FUNCIONES----------------------------*/
 //|   declaracion_funciones TK_PUNTO_COMA
 //|   delcaracion_metodos
@@ -303,32 +307,32 @@ case_default:
 +++++++++++++++++++++++++++++
 */
 sentencias_ciclicas:
-    sentencia_while
-|   sentencia_for
-|   sentencia_do TK_PUNTO_COMA
-|   sentencia_loop
+    sentencia_while             { $$ = $1; }
+|   sentencia_for               { $$ = $1; }
+|   sentencia_do TK_PUNTO_COMA  { $$ = $1; }
+|   sentencia_loop              { $$ = $1; }
 ;
 
 sentencia_while:
-    RW_WHILE TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+    RW_WHILE TK_IPAR expresion TK_DPAR TK_ILLAVE entorno TK_DLLAVE  { $$ = new While($3, $6, @1.first_line, @1.first_column); }
 ;
 
 sentencia_for:
-    RW_FOR TK_IPAR declaracion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_DPAR TK_ILLAVE entorno TK_DLLAVE
-|   RW_FOR TK_IPAR asignacion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+    RW_FOR TK_IPAR declaracion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_DPAR TK_ILLAVE entorno TK_DLLAVE   { $$ = new For($3, $5, $7, $10, @1.first_line, @1.first_column); }
+|   RW_FOR TK_IPAR asignacion_variables TK_PUNTO_COMA logica TK_PUNTO_COMA actualizacion_for TK_DPAR TK_ILLAVE entorno TK_DLLAVE    { $$ = new For($3, $5, $7, $10, @1.first_line, @1.first_column); }
 ;
 
 actualizacion_for:
-    incremento_decremento
-|   TK_ID TK_IGUAL expresion
+    incremento_decremento   { $$ = $1; }
+|   asignacion_variables    { $$ = $1; }
 ;
 
 sentencia_do:
-    RW_DO TK_ILLAVE entorno TK_DLLAVE RW_UNTIL TK_IPAR expresion TK_DPAR
+    RW_DO TK_ILLAVE entorno TK_DLLAVE RW_UNTIL TK_IPAR expresion TK_DPAR    { $$ = new DoUntil($3, $7, @1.first_line, @1.first_column); }
 ;
 
 sentencia_loop:
-    RW_LOOP TK_ILLAVE entorno TK_DLLAVE
+    RW_LOOP TK_ILLAVE entorno TK_DLLAVE { $$ = new While(new PrimitiveVal("true", Primitive.BOOL, @1.first_line, @1.first_column), $3, @1.first_line, @1.first_column); }
 ;
 
 /*
@@ -339,7 +343,7 @@ sentencia_loop:
 
 entorno:
     instrucciones   { $$ = new CodeBlock($1, @1.first_line, @1.first_column); }
-|                   { $$ = undefined; }
+|                   { $$ = new CodeBlock([], @1.first_line, @1.first_column); }
 ;
 
 /* 
