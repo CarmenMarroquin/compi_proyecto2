@@ -9,7 +9,7 @@ import Symbol from "../herramientas/simbolos";
 import { CallVar } from "../expresiones/callVar";
 
 export interface VarArgs {
-    id: string, type: Primitive, deft?: Statement
+    id: string, type: Primitive | Any, deft?: Statement
 }
 
 

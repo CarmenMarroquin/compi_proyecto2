@@ -89,7 +89,7 @@ export class CallFunc implements Statement {
         for (const receivedArg of this.argExpr){
             try {
                 type CalledFuncArgs = { id: string, type: Primitive, deft?: Statement }
-                const matchingArg: Array<CalledFuncArgs> = calledFunc.args.filter((argument) => argument.id === receivedArg.id);
+                const matchingArg: Array<CalledFuncArgs> = (calledFunc.args.filter((argument) => argument.id === receivedArg.id) as Array<CalledFuncArgs>);
                 if (matchingArg.length === 1){
                     const receivedValue: ReturnType = receivedArg.val.getValue(tree, funcEnv);
                     const updateSymbol = new Symbol(receivedArg.id.toLowerCase(), receivedValue.type, receivedValue.value, VariableTypes.VAR, this.line, this.column, funcEnv);
@@ -195,6 +195,6 @@ export class CallFunc implements Statement {
         }
         return node;
     }
-
-
 }
+
+

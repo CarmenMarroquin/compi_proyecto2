@@ -554,3 +554,7 @@ parametros_llamada:
     parametros_llamada TK_COMA TK_ID TK_IGUAL expresion { $1.push({id: $3, val: $5}); $$ = $1; }
 |   TK_ID TK_IGUAL expresion    { $$ = [{id: $1, val: $3}]; }
 ;
+
+llamada_nativa:
+    TK_ID TK_IPAR expresion TK_DPAR { $$ = new CallFunc($1, [{id: "arg", val: $3}], @1.first_line, @1.first_column); }
+;

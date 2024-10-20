@@ -8,7 +8,7 @@
 
 import { Exception } from "../errores";
 import Environment from "./entornos";
-import { Node, Statement } from "../abastract/ast";
+import { Node, Statement } from "../abstract/ast";
 import ReturnType from "./returnType";
 import Symbol from "./simbolos";
 

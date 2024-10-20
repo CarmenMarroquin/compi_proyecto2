@@ -1,118 +1,307 @@
 import Symbol from "./simbolos";
 import { Exception } from "../errores";
-import { Any, Functions, Id, Primitive, ValueType } from "./tipos";
-/*
-import { Func, Function, NativeFunc } from "../instrucciones/function";
-import { CodeBlock } from "../instructions/codeBlock";
-import { Return } from "../instructions/return";
-import { CallVar } from "../expressions/callVar";
-*/
+import { Any, Functions, Id, Primitive, ValueType, VariableTypes } from "./tipos";
+import { Func, Function, NativeFunc } from "../instrucciones/functions";
+import { Statement } from "../abstract/ast";
+import { CodeBlock } from "../instrucciones/codeBlock";
+import { Return } from "../instrucciones/transferOp";
+import { CallVar } from "../expresiones/callVar";
 import ReturnType from "./returnType";
+import { Vector } from "../expresiones/vector";
+import { PrimitiveVal } from "../expresiones/primitives";
 
 
+type FuncArgs = { id: string, type: Primitive, deft?: Statement }
 export function createGlobalEnv() {
     const env = new Environment();
     // Define a native builtin functions
     // TODO DO NATIVE FUNCTIONS
-    /*
     env.setSymbol(new Symbol(
         "lower",
         Functions.NATIVE_FN,
         new NativeFunc(
+            Primitive.STRING,
             "lower",
-            [{id: "str", type: Primitive.STRING}],
+            [{id: "arg", type: Primitive.STRING}],
             (strVar) =>{
                 strVar.value = (strVar.value as string).toLowerCase();
                 return strVar;
             },
             0,0
-        ), 0, 0, env
+        ), Functions.NATIVE_FN,0, 0, env
     ));
 
     env.setSymbol(new Symbol(
         "upper",
         Functions.NATIVE_FN,
         new NativeFunc(
+            Primitive.STRING,
             "upper",
-            [{id: "str", type: Primitive.STRING}],
-
+            [{id: "arg", type: Primitive.STRING}],
             (strVar) =>{
                 strVar.value = (strVar.value as string).toUpperCase();
                 return strVar;
             },
             0,0
-        ), 0, 0, env
+        ), Functions.NATIVE_FN ,0, 0, env
     ));
-    */
 
-    // TODO round function
-    /*
     env.setSymbol(new Symbol(
         "round",
         Functions.NATIVE_FN,
         new NativeFunc(
+            Primitive.INT,
             "round",
-            [{id: "num", type: Primitive.INT}],
-
-            (numVar) =>{
-                numVar.value = (numVar.value as double).toUpperCase();
-                return strVar;
+            [{id: "arg", type: Primitive.DOUBLE}],
+            (arg) =>{
+                arg.value = Math.round((arg.value as number));
+                arg.type = Primitive.INT;
+                return arg;
             },
             0,0
-        ), 0, 0, env
+        ), Functions.NATIVE_FN ,0, 0, env
     ));
-    */
 
-
-    /*
     env.setSymbol(new Symbol(
         "len",
         Functions.NATIVE_FN,
         new NativeFunc(
+            Primitive.INT,
             "len",
-            [{id: "@str", type: Primitive.STRING}],
-            (strVar) =>{
-                strVar.value = (strVar.value as string).length;
-                strVar.type = Primitive.INT;
-                return strVar;
+            [{id: "arg", type: Any.ANY}],
+            (arg) =>{
+                if (arg.type === Primitive.STRING){
+                    arg.value = (arg.value as string).length;
+                    arg.type = Primitive.INT;
+                } else if (arg.type === VariableTypes.ARRAY){
+                    arg.value = (arg.value as Vector).length;
+                    arg.type = Primitive.INT;
+                }
+                return arg;
             },
             0,0
-        ), 0, 0, env
+        ), Functions.NATIVE_FN ,0, 0, env
     ));
 
-    env.setSymbol(new Symbol(
-        "round",
-        Functions.NATIVE_FN,
-        new NativeFunc(
-            "round",
-            [{id: "num", type: Primitive.DOUBLE}],
-            (num) =>{
-                let newNum: number = Number(num.value);
-                num.value = Math.round(newNum);
-                num.type = Primitive.DOUBLE;
-                return num;
-            },
-            0,0
-        ), 0, 0, env
-    ));
-
-    // verify this
     env.setSymbol(new Symbol(
         "truncate",
         Functions.NATIVE_FN,
         new NativeFunc(
+            Primitive.INT,
             "truncate",
-            [{id: "num", type: Primitive.DOUBLE}],
-            (num) =>{
-                let newNum: number = Number(num.value);
-                num.value = Math.trunc(newNum);
-                num.type = Primitive.DOUBLE;
-                return num;
+            [{id: "arg", type: Primitive.DOUBLE}],
+            (arg) =>{
+                arg.value = Math.trunc((arg.value as number));
+                arg.type = Primitive.INT;
+                return arg;
             },
             0,0
-        ), 0, 0, env
+        ), Functions.NATIVE_FN ,0, 0, env
     ));
-    */
+
+
+    env.setSymbol(new Symbol(
+        "tostring",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.STRING,
+            "tostring",
+            [{id: "arg", type: Primitive.DOUBLE}],
+            (arg) =>{
+                arg.value = String(arg.value);
+                arg.type = Primitive.STRING;
+                return arg;
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
+
+
+    env.setSymbol(new Symbol(
+        "tochararray",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.CHAR,
+            "tochararray",
+            [{id: "arg", type: Primitive.STRING}],
+            (arg) =>{
+                const newArr = (arg.value as string).split("");
+                const primitiveVals = newArr.map(val => new PrimitiveVal(val, Primitive.CHAR, 0, 0));
+                const returnedVals = newArr.map(val => new ReturnType(Primitive.CHAR, val));
+                let newVector = new Vector(newArr.length, Primitive.CHAR, primitiveVals);
+                newVector.interpretedValues = returnedVals;
+                arg.value = newVector;
+                arg.type = VariableTypes.ARRAY;
+                return arg;
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
+
+
+    env.setSymbol(new Symbol(
+        "reverse",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.STRING,
+            "reverse",
+            [{id: "arg", type: Any.ANY}],
+            (arg) =>{
+                const argAsVector = arg.value as Vector;
+                argAsVector.values = argAsVector.values.reverse();
+                argAsVector.interpretedValues = argAsVector.interpretedValues.reverse();
+                arg.value = argAsVector
+                arg.type = VariableTypes.ARRAY;
+                return arg;
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
+
+
+    env.setSymbol(new Symbol(
+        "max",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.INT,
+            "max",
+            [{id: "arg", type: Any.ANY}],
+            (arg) =>{
+                const argAsVector = arg.value as Vector;
+                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE || argAsVector.dataType === Primitive.BOOL){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((prev, current) => {
+                            return (prev.value > current.value) ? prev.value : current.value;
+                        })
+                    );
+                } else if (argAsVector.dataType === Primitive.CHAR){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((prev, current) => {
+                            return ((prev.value as string).charCodeAt(0) > (current.value as string).charCodeAt(0)) ? prev.value : current.value;
+                        })
+                    );
+                } else if (argAsVector.dataType === Primitive.STRING){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((prev, current) => {
+                            return (prev.value < current.value) ? prev.value : current.value;
+                        })
+                    );
+                }
+                return arg;
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
+
+
+    env.setSymbol(new Symbol(
+        "min",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.INT,
+            "min",
+            [{id: "arg", type: Any.ANY}],
+            (arg) =>{
+                const argAsVector = arg.value as Vector;
+                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE || argAsVector.dataType === Primitive.BOOL){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((prev, current) => {
+                            return (prev.value < current.value) ? prev.value : current.value;
+                        })
+                    );
+                } else if (argAsVector.dataType === Primitive.CHAR){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((prev, current) => {
+                            return ((prev.value as string).charCodeAt(0) < (current.value as string).charCodeAt(0)) ? prev.value : current.value;
+                        })
+                    );
+                } else if (argAsVector.dataType === Primitive.STRING){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((prev, current) => {
+                            return (prev.value > current.value) ? prev.value : current.value;
+                        })
+                    );
+                }
+
+                return arg;
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
+
+
+    env.setSymbol(new Symbol(
+        "sum",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.INT,
+            "sum",
+            [{id: "arg", type: Any.ANY}],
+            (arg) =>{
+                const argAsVector = arg.value as Vector;
+                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0)
+                    );
+                } else if (argAsVector.dataType === Primitive.BOOL){
+                    return new ReturnType(
+                        Primitive.INT,
+                        argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0)
+                    );
+                }
+                else if (argAsVector.dataType === Primitive.CHAR){
+                    return new ReturnType(
+                        Primitive.INT,
+                        argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + (currentValue.value as string).charCodeAt(0), 0)
+                    );
+                } else if (argAsVector.dataType === Primitive.STRING){
+                    return new ReturnType(
+                        argAsVector.dataType,
+                        argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, "")
+                    );
+                }
+                return arg;
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
+
+
+    env.setSymbol(new Symbol(
+        "average",
+        Functions.NATIVE_FN,
+        new NativeFunc(
+            Primitive.DOUBLE,
+            "average",
+            [{id: "arg", type: Any.ANY}],
+            (arg) =>{
+                const argAsVector = arg.value as Vector;
+                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE || argAsVector.dataType === Primitive.BOOL){
+                    const sum = argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
+                    return new ReturnType(
+                        Primitive.DOUBLE,
+                        sum / argAsVector.length
+                    );
+                } else if (argAsVector.dataType === Primitive.CHAR){
+                    const sum = argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + (currentValue.value as string).charCodeAt(0), 0);
+                    return new ReturnType(
+                        Primitive.INT,
+                        sum/argAsVector.length
+                    );
+                } else {
+                    throw new Exception("Type Error", `Cannot calculate average of ${argAsVector.dataType}`, 0, 0, "global");
+                }
+            },
+            0,0
+        ), Functions.NATIVE_FN ,0, 0, env
+    ));
 
     return env;
 }

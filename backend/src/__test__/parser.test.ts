@@ -3,6 +3,8 @@ import supertest from 'supertest';
 import path from "path";
 import { readFileSync } from 'fs';
 import { CompInterpreterParser, CompInterpreterLexer } from '../analizador/gramatica';
+import { createGlobalEnv } from '../analizador/herramientas/entornos';
+import Tree from '../analizador/herramientas/arbol';
 
 describe("Testing parser logics", function() {
     it("Testing a general example of the program", function() {
@@ -23,6 +25,27 @@ describe("Testing parser logics", function() {
 
         const parser = new CompInterpreterParser();
         let instructions: Array<any> = parser.parse(data);
+
+        const globalEnv = createGlobalEnv();
+        const tree = new Tree(instructions, globalEnv)
+
+        for (const instruction of tree.instructions){
+            let value;
+            try {
+                value = instruction.interpret(tree, globalEnv);
+            } catch(err){
+                console.log("----------------------------------ERROR VAL----------------------------------")
+                console.log(err);
+                console.log("----------------------------------VALUE RETURNED----------------------------------")
+                console.log(value);
+                console.log("----------------------------------GLOBAL ENV----------------------------------")
+                console.log(globalEnv);
+                console.log("----------------------------------ERRORS FROM TREE----------------------------------")
+                console.log(tree.errors);
+                //expect(err).toBeFalsy();
+            }
+        }
+
     });
 
     it("Testing TestFile 1", function() {
