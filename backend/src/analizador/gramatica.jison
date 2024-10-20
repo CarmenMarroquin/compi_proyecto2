@@ -158,6 +158,8 @@
     import { For } from "./instrucciones/for";
     import { DoUntil } from "./instrucciones/do_until";
     import { Break, Continue, Return } from "./instrucciones/transferOp";
+    import { Echo } from "./instrucciones/echo";
+    import { Function, Method } from "./instrucciones/functions";
 
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
@@ -204,7 +206,7 @@
 
 inicio: 
     entorno_global EOF  { return $1; }   
-|   EOF                 { return null; } 
+|   EOF                 { return []; } 
 ;
 
 entorno_global:
@@ -247,7 +249,7 @@ instruccion :
 //|   declaracion_funciones TK_PUNTO_COMA
 //|   delcaracion_metodos
 |   llamadas TK_PUNTO_COMA
-|   echo TK_PUNTO_COMA
+|   echo TK_PUNTO_COMA      { $$ = $1; }
 ;
 
 /* 
@@ -429,18 +431,18 @@ asignacion_variables:
 */
 
 declaracion_funciones:
-    RW_FUNTION tipo TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
-|   RW_FUNTION tipo TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+    RW_FUNTION tipo TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE    { $$ = new Function($2, $3, $5, $8, @1.first_line, @1.first_column); }
+|   RW_FUNTION tipo TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE                       { $$ = new Function($2, $3, [], $7, @1.first_line, @1.first_column); }
 ;
 
 parametros_funcion:
-    parametros_funcion TK_COMA parametro_funcion
-|   parametro_funcion
+    parametros_funcion TK_COMA parametro_funcion    { $1.push($3); $$ = $1; }
+|   parametro_funcion                               { $$ = [$1]; }
 ;
 
 parametro_funcion:
-    TK_ID TK_DOS_PUNTOS tipo TK_IGUAL expresion
-|   TK_ID TK_DOS_PUNTOS tipo
+    TK_ID TK_DOS_PUNTOS tipo TK_IGUAL expresion { $$ = {id: $1, type: $3, deft: $5}; }
+|   TK_ID TK_DOS_PUNTOS tipo                    { $$ = {id: $1, type: $3}; }
 ;
 
 /* 
@@ -449,8 +451,8 @@ parametro_funcion:
 +++++++++++++++++++++++++++++
 */
 declaracion_metodos:
-    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE
-|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE
+    RW_FUNTION RW_VOID TK_ID TK_IPAR parametros_funcion TK_DPAR TK_ILLAVE entorno TK_DLLAVE { $$ = new Function(undefined, $3, $5, $8, @1.first_line, @1.first_column); }
+|   RW_FUNTION RW_VOID TK_ID TK_IPAR TK_DPAR TK_ILLAVE entorno TK_DLLAVE                    { $$ = new Function(undefined, $3, [], $7, @1.first_line, @1.first_column); }
 ;
 
 /* 
@@ -459,7 +461,7 @@ declaracion_metodos:
 +++++++++++++++++++++++++++++
 */
 echo:
-    RW_ECHO expresion
+    RW_ECHO expresion   { $$ = new Echo($2, @1.first_line, @1.first_column); }
 ;
 
 /* 

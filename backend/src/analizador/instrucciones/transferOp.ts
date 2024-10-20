@@ -62,9 +62,9 @@ export class Continue implements Statement {
 export class Return implements Statement {
     public line;
     public column;
-    public expression: Statement;
+    public expression: Statement | undefined;
 
-    constructor(expression: Statement, line: number, column: number, public func?:(arg: ReturnType) => ReturnType ){
+    constructor(expression: Statement | undefined, line: number, column: number, public func?:(arg: ReturnType) => ReturnType ){
         this.expression = expression;
         this.line = line;
         this.column = column;

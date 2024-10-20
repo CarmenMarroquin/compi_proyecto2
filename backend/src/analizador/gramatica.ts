@@ -35,6 +35,7 @@ import { JisonParser, JisonParserApi, StateType, SymbolsType, TerminalsType, Pro
     import { While } from "./instrucciones/while";
     import { For } from "./instrucciones/for";
     import { DoUntil } from "./instrucciones/do_until";
+    import { Break, Continue, Return } from "./instrucciones/transferOp";
 
     import { Vector } from "./expresiones/vector";
     import { NewVector } from "./expresiones/newVectores";
@@ -77,7 +78,7 @@ case 1:
  return $$[$0-1]; 
 break;
 case 2:
- return null; 
+ return []; 
 break;
 case 3: case 11: case 36:
  $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
@@ -90,6 +91,18 @@ case 5: case 6: case 7: case 10: case 13: case 14: case 15: case 16: case 17: ca
 break;
 case 8: case 9: case 18: case 19: case 28: case 29: case 39: case 40: case 41: case 43: case 47: case 48: case 89: case 90: case 91: case 92: case 93: case 94: case 95: case 96: case 97:
  this.$ = $$[$0]; 
+break;
+case 20:
+ this.$ = new Break(_$[$0-1].first_line, _$[$0-1].first_column); 
+break;
+case 21:
+ this.$ = new Continue(_$[$0-1].first_line, _$[$0-1].first_column); 
+break;
+case 22:
+ this.$ = new Return($$[$0-1], _$[$0-2].first_line, _$[$0-2].first_column); 
+break;
+case 23:
+ this.$ = new Return(undefined, _$[$0-1].first_line, _$[$0-1].first_column); 
 break;
 case 30:
  $$[$0-1].envName = "if_env"; this.$ = new If($$[$0-4], $$[$0-1], undefined, _$[$0-6].first_line, _$[$0-6].first_column); 
