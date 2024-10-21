@@ -29,7 +29,11 @@ export class PrimitiveVal implements Statement {
                 break;
             }
             case Primitive.BOOL: {
-                this.value = this.value.toLowerCase() == 'true'? true : false;
+                //console.log(`Bool at Line: ${this.line}, Column${this.column}`)
+                // TODO temporary change
+                if (typeof this.value !== "boolean"){
+                    this.value = this.value.toLowerCase() == 'true'? true : false;
+                }
                 break;
             }
             case Primitive.DOUBLE: {
@@ -45,7 +49,7 @@ export class PrimitiveVal implements Statement {
                 break;
             }
             case Primitive.CHAR: {
-                this.value = this.value;
+                this.value = (this.value as string).charAt(1);
                 break;
             }
         }

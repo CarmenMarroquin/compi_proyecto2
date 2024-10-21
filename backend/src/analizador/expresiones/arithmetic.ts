@@ -179,7 +179,7 @@ export class Arithmetic implements Statement {
                     return new ReturnType(Primitive.STRING, leftResult.value + rightResult.value);
                 }
                 case Primitive.CHAR: {
-                    return new ReturnType(Primitive.STRING, leftResult.value + rightResult.value.charCodeAt(0));
+                    return new ReturnType(Primitive.STRING, leftResult.value + rightResult.value);
                 }
                 case Primitive.STRING: {
                     return new ReturnType(Primitive.STRING, leftResult.value + rightResult.value);

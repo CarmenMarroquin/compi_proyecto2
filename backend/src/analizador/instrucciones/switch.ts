@@ -8,6 +8,8 @@ import { CodeBlock } from "./codeBlock";
 import Symbol from "../herramientas/simbolos";
 import { PrimitiveVal } from "../expresiones/primitives";
 import { when } from "joi";
+import { DoUntil } from "./do_until";
+import { If } from "./if";
 
 type SimpleStmts = { when: Statement, then: Statement }
 type Case = { cond: Statement, then: CodeBlock }
@@ -42,13 +44,22 @@ export class Switch implements Statement {
         const caseEnv: Environment = new Environment(table, "case_env");
         tree.envs.push(caseEnv);
         let thenBlock: ReturnType | undefined = undefined;
+        let breakedSwitch: boolean = false;
+        let visitedBlock: boolean = false;
         if (this.cases !== undefined){
             for (const caseItem of this.cases){
                 try {
-                    if (value.value === caseItem.cond.getValue(tree, table).value){
+                    if (value.value === caseItem.cond.getValue(tree, table).value || visitedBlock){
+                        visitedBlock = true;
                         thenBlock = caseItem.then.interpret(tree, caseEnv);
+                        //console.log(((caseItem.then.instructions[2] as DoUntil).block.instructions[3] as If).block.instructions[1]);
+                        //console.log("BREAKED SWITHC")
                         if (thenBlock instanceof ReturnType){
-                            if (thenBlock.type === TransferOp.BREAK || thenBlock.type === TransferOp.CONTINUE) {
+                            if (thenBlock.type === TransferOp.BREAK){
+                                breakedSwitch = true;
+                                break;
+                            }
+                            if (thenBlock.type === TransferOp.CONTINUE) {
                                 // this operations return  an instance of type ReturnType({TransferOp.BREAK or TransferOp.CONTINUE}, null)
                                 return thenBlock;
                             }
@@ -63,7 +74,7 @@ export class Switch implements Statement {
                 }
             }
         }
-        if (this.deft !== undefined){
+        if (this.deft !== undefined && !breakedSwitch){
             try {
                 caseEnv.name = "default_env";
                 thenBlock = this.deft.interpret(tree, caseEnv);

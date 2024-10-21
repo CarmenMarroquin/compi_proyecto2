@@ -37,10 +37,13 @@ export class If implements Statement {
 
         const ifEnv: Environment = new Environment(table, "if_env");
         tree.envs.push(ifEnv);
+        //console.log(`FLAG ${flag.value} at ${this.line} ${this.column}`);
         if (flag.type === Primitive.BOOL){
             if (flag.value === true){
                 try{
-                    return this.block.interpret(tree, ifEnv);
+                    //console.log(this.block.interpret(tree, ifEnv));
+                    let retVar = this.block.interpret(tree, ifEnv);
+                    return retVar;
                 } catch(err){
                     tree.errors.push(err as Exception); throw err;
                 }

@@ -47,10 +47,17 @@ export class For implements Statement {
         }
 
         try {
+            let flag: ReturnType = this.condition.getValue(tree, newForEnv);
+            if (flag.type !== Primitive.BOOL){
+                let err =new Exception('Semantic',`Invalid expression in FOR condition`, this.line, this.column, table.name);
+                throw err;
+            }
+
             let retVal: ReturnType | undefined;
-            while (this.condition.getValue(tree, newForEnv)){
+            while (flag.value){
                 retVal = this.block.interpret(tree, newForEnv);
                 this.update.interpret(tree, newForEnv);
+                flag = this.condition.getValue(tree, newForEnv);
                 // To handle control words
                 if (retVal instanceof ReturnType){
                     if (retVal.type === TransferOp.BREAK){

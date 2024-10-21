@@ -39,8 +39,35 @@ export class VarDeclaration implements Statement {
 
 
         for (const variable of this.vars) {
-            symbols.push(new Symbol(variable.toLowerCase(), this.dataType, null, VariableTypes.VAR, this.line, this.column, table));
+            let defaultVal: any = null;
+            /*
+            switch(this.dataType){
+                case Primitive.DOUBLE:{
+                    defaultVal = 0;
+                    break;
+                }
+                case Primitive.INT: {
+                    defaultVal = 0;
+                    break;
+                }
+                case Primitive.BOOL: {
+                    defaultVal = false;
+                    break;
+                }
+                case Primitive.CHAR: {
+                    defaultVal = '';
+                    break;
+                }
+                case Primitive.STRING: {
+                    defaultVal = "";
+                }
+            }
+            */
+
+            symbols.push(new Symbol(variable.toLowerCase(), this.dataType, defaultVal, VariableTypes.VAR, this.line, this.column, table));
         }
+
+
 
         // if the variables has no value it is undefined and stored as it is
         if (this.expression === undefined) {
@@ -62,7 +89,7 @@ export class VarDeclaration implements Statement {
             for (const symbol of symbols){
                 // if the value given and the data type are not the same throw an error
                 if (symbol.type !== value.type){
-                    let err = new Exception("Semantic", `Type: ${value.type} can't be assigned to variable of type ${symbol.type}`, this.line, this.column, table.name);
+                    let err = new Exception("Semantic", `Type: variable "${symbol.id}" ${value.type} can't be assigned to variable of type ${symbol.type}`, this.line, this.column, table.name);
                     tree.errors.push(err); throw err;
                 // if they are the same assign the value of the symmbol to a new value and try to store the symbol
                 } else {
@@ -141,7 +168,7 @@ export class ConstDeclaration implements Statement {
                 tree.errors.push(err as Exception); throw err;
             }
 
-            // TODO verify if this is working as expecte
+            // TODO verify if this is working as expected
             for (const symbol of symbols){
                 // if the value given and the data type are not the same throw an error
                 if (symbol.type !== value.type){

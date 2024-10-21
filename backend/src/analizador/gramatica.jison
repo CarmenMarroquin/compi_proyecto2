@@ -173,6 +173,12 @@
     import { TernaryOperator } from "./expresiones/ternaryOperator";
     import { IsFunction } from "./expresiones/isFunction";
     import { CallFunc } from "./expresiones/callFunc";
+
+    import Environment from "./herramientas/entornos";
+%}
+
+%{
+    export const environments: Environment[] = [];
 %}
 
 

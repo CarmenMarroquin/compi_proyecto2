@@ -53,9 +53,10 @@ export class IncDecVar implements Statement {
                 } catch(err){
                     tree.errors.push(err as Exception); throw err;
                 }
+                break;
             }
             case VariableTypes.CONST: {
-                let err = new Exception("Semantic", `Constant has already beign assigned`, this.line, this.column, table.name);
+                let err = new Exception("Semantic", `Constant "${symbol.id}" has already beign assigned`, this.line, this.column, table.name);
                 tree.errors.push(err); throw err;
             }
         }

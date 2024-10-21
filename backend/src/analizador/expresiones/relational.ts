@@ -86,6 +86,9 @@ export class Relational implements Statement {
             tree.errors.push(err as Exception); throw err;
         }
 
+        let results: Ret = this._transformAsciiToNumber(leftResult, rightResult);
+        leftResult = results.left; rightResult = results.right;
+
         return new ReturnType(
             Primitive.BOOL,
             leftResult.value !== rightResult.value
@@ -104,6 +107,11 @@ export class Relational implements Statement {
             tree.errors.push(err as Exception); throw err;
         }
 
+        let results: Ret = this._transformAsciiToNumber(leftResult, rightResult);
+        leftResult = results.left; rightResult = results.right;
+
+        //console.error(`LEFT: {type: ${leftResult.type}, val: ${leftResult.value}}, RIGHT: {type: ${rightResult.type}, val: ${rightResult.value}}`);
+
         return new ReturnType(
             Primitive.BOOL,
             leftResult.value === rightResult.value
@@ -121,6 +129,9 @@ export class Relational implements Statement {
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
 
+
+        results = this._transformAsciiToNumber(leftResult, rightResult);
+        leftResult = results.left; rightResult = results.right;
         return new ReturnType(
             Primitive.BOOL,
             leftResult.value > rightResult.value
@@ -137,6 +148,9 @@ export class Relational implements Statement {
         }
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
+
+        results = this._transformAsciiToNumber(leftResult, rightResult);
+        leftResult = results.left; rightResult = results.right;
 
         return new ReturnType(
             Primitive.BOOL,
@@ -156,6 +170,9 @@ export class Relational implements Statement {
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
 
+        results = this._transformAsciiToNumber(leftResult, rightResult);
+        leftResult = results.left; rightResult = results.right;
+
         return new ReturnType(
             Primitive.BOOL,
             leftResult.value >= rightResult.value
@@ -172,6 +189,9 @@ export class Relational implements Statement {
         }
         let leftResult: ReturnType = results.left;
         let rightResult: ReturnType = results.right;
+
+        results = this._transformAsciiToNumber(leftResult, rightResult);
+        leftResult = results.left; rightResult = results.right;
 
         return new ReturnType(
             Primitive.BOOL,
@@ -191,6 +211,20 @@ export class Relational implements Statement {
         }
 
         return { left: leftResult, right: rightResult };
+    }
+
+    _transformAsciiToNumber(left: ReturnType, right: ReturnType): Ret{
+        if (left.type === Primitive.CHAR && (right.type === Primitive.INT || right.type === Primitive.DOUBLE)){
+            left.type = Primitive.INT
+            left.value = (left.value as string).charCodeAt(0);
+            return {"left": left, "right": right}
+        } else if (right.type === Primitive.CHAR && (left.type === Primitive.INT || left.type === Primitive.DOUBLE)){
+            right.type = Primitive.INT
+            right.value = (left.value as string).charCodeAt(0);
+            return {"left": left, "right": right}
+        } else {
+            return {"left": left, "right": right};
+        }
     }
 
     _typeCheckOperator(leftResult: ReturnType, rightResult: ReturnType, table: Environment){

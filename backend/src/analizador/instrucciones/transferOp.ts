@@ -43,7 +43,7 @@ export class Continue implements Statement {
     }
 
     getValue(tree: Tree, table: Environment): ReturnType {
-        return new ReturnType(Primitive.NULL, null);
+        return new ReturnType(TransferOp.CONTINUE, null);
     }
 
     interpret(tree: Tree, table: Environment) {

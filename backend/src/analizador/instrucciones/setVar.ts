@@ -42,10 +42,17 @@ export class SetVar implements Statement {
             tree.errors.push(err as Exception); throw err;
         }
 
+        if (symbol.type === Primitive.INT && value.type === Primitive.DOUBLE){
+            value.type = Primitive.INT;
+            value.value = Math.trunc(value.value);
+        } else if (symbol.type === Primitive.DOUBLE && value.type === Primitive.INT){
+            value.type = Primitive.DOUBLE;
+        }
         if (symbol.type !== value.type){
-            let err = new Exception("Semantic", `Type: ${value.type} can't be assigned to variable of type: ${symbol.type}`, this.line, this.column, table.name);
+            let err = new Exception("Semantic", `Type: "${symbol.id}" ${value.type} can't be assigned to variable of type: ${symbol.type}`, this.line, this.column, table.name);
             tree.errors.push(err); throw err;
         }
+
 
         switch (symbol.symType){
             case VariableTypes.VAR: {
@@ -54,9 +61,10 @@ export class SetVar implements Statement {
                 } catch(err){
                     tree.errors.push(err as Exception); throw err;
                 }
+                break;
             }
             case VariableTypes.CONST: {
-                let err = new Exception("Semantic", `Constant has already beign assigned`, this.line, this.column, table.name);
+                let err = new Exception("Semantic", `Constant "${symbol.id}" has already beign assigned`, this.line, this.column, table.name);
                 tree.errors.push(err); throw err;
             }
         }

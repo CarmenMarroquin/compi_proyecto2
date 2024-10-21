@@ -27,14 +27,17 @@ export class DoUntil implements Statement {
 
     interpret(tree: Tree, table: Environment) {
         let flag: ReturnType;
+        /*
         try {
             flag = this.condition.getValue(tree, table)
+            console.log("AQUII");
         } catch(err){
             tree.errors.push(err as Exception);
             throw err;
         }
+        */
 
-        const newWhileEnv: Environment = new Environment(table, "while_env");
+        const newWhileEnv: Environment = new Environment(table, "do_while_env");
         tree.envs.push(newWhileEnv);
 
         let res: ReturnType | void = undefined;
@@ -49,11 +52,12 @@ export class DoUntil implements Statement {
             }
 
             try {
-                flag = this.condition.getValue(tree, newWhileEnv)
+                flag = this.condition.getValue(tree, newWhileEnv);
             } catch(err){
                 tree.errors.push(err as Exception);
                 throw err;
             }
+
             // To handle control words
             if (res instanceof ReturnType){
                 if (res.type === TransferOp.BREAK){
@@ -66,7 +70,7 @@ export class DoUntil implements Statement {
                     return res;
                 }
             }
-        } while (flag.value);
+        } while (!flag.value);
 
         return undefined;
     }

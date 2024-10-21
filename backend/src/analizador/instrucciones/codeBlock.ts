@@ -6,6 +6,8 @@ import Tree from "../herramientas/arbol";
 import { Primitive, VariableTypes, IncDec, TransferOp, Functions } from "../herramientas/tipos";
 import Symbol from "../herramientas/simbolos";
 import { Vector } from "../expresiones/vector";
+import { environments } from '../../analizador/gramatica';
+import { Break } from "./transferOp";
 
 
 
@@ -33,6 +35,9 @@ export class CodeBlock implements Statement {
     }
 
     interpret(tree: Tree, table: Environment) {
+        // store this environment in array
+        environments.push(table);
+
         // In case want to initiate the new environment with a default symbol
         let retVar: ReturnType | undefined;
         for (let instruction of this.instructions){

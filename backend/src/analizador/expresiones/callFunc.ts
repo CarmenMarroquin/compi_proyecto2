@@ -46,7 +46,7 @@ export class CallFunc implements Statement {
 
         // Verify quantity of parameters
         if (this.argExpr.length !== 0 && calledFunc.args.length !== 0){
-            if (this.argExpr.length >= calledFunc.args.length) {
+            if (this.argExpr.length > calledFunc.args.length) {
                 let err = new Exception('Sementic', `${this.id} expected ${calledFunc.args.length} parameters, ${this.argExpr.length} given`, this.line, this.column, table.name);
                 tree.errors.push(err);
                 throw err;
@@ -54,6 +54,7 @@ export class CallFunc implements Statement {
         } else if (this.argExpr.length === 0 && calledFunc.args.length === 0){
 
         } else {
+            // TODO modify this if there is an error calling a function
             if (this.argExpr.length !== 0){
                 let err = new Exception('Sementic', `${this.id} expected ${this.argExpr.length} parameters, ${0} given`, this.line, this.column, table.name);
                 tree.errors.push(err);

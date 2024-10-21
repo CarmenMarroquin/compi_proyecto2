@@ -307,7 +307,6 @@ export function createGlobalEnv() {
 }
 
 
-
 export default class Environment {
     public name: string;
     public parent?: Environment;

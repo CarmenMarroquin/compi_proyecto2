@@ -63,7 +63,7 @@ export class Cast implements Statement {
                     }
                     case Primitive.CHAR: {
                         if (res.type === Primitive.INT){
-                            newRet.value = String.fromCharCode(res.value);
+                            newRet.value = String(String.fromCharCode(res.value));
                             newRet.type = Primitive.CHAR;
                             return newRet;
                         }

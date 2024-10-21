@@ -3,8 +3,52 @@ import supertest from 'supertest';
 import path from "path";
 import { readFileSync } from 'fs';
 import { CompInterpreterParser, CompInterpreterLexer } from '../analizador/gramatica';
-import { createGlobalEnv } from '../analizador/herramientas/entornos';
+import Environment, { createGlobalEnv } from '../analizador/herramientas/entornos';
 import Tree from '../analizador/herramientas/arbol';
+import { CallFunc } from '../analizador/expresiones/callFunc';
+
+// Helper to store all symbols first (variable declarations, function declarations, etc.)
+function storeAllSymbols(tree: Tree, globalEnv: Environment) {
+    for (const instruction of tree.instructions) {
+        let value;
+        try {
+            if (!(instruction instanceof CallFunc)) {
+                value = instruction.interpret(tree, globalEnv);
+            }
+        } catch (err) {
+            console.log("----------------------------------ERROR VAL----------------------------------")
+            console.error(err);
+            console.log("----------------------------------VALUE RETURNED----------------------------------")
+            console.log(value);
+            console.log("----------------------------------GLOBAL ENV----------------------------------")
+            console.log(globalEnv);
+            console.log("----------------------------------ERRORS FROM TREE----------------------------------")
+            console.log(tree.errors);
+
+            throw err;  // Fail the test if there's an error
+        }
+    }
+}
+
+// Helper to execute the code after symbols have been stored
+function executeCode(tree: Tree, globalEnv: Environment) {
+    for (const instruction of tree.instructions) {
+        let value;
+        try {
+            value = instruction.interpret(tree, globalEnv);
+        } catch (err) {
+            console.log("----------------------------------ERROR VAL----------------------------------")
+            console.error(err);
+            console.log("----------------------------------VALUE RETURNED----------------------------------")
+            console.log(value);
+            console.log("----------------------------------GLOBAL ENV----------------------------------")
+            console.log(globalEnv);
+            console.log("----------------------------------ERRORS FROM TREE----------------------------------")
+            console.error(tree.errors);
+            throw err;  // Fail the test if there's an error
+        }
+    }
+}
 
 describe("Testing parser logics", function() {
     it("Testing a general example of the program", function() {
@@ -29,23 +73,8 @@ describe("Testing parser logics", function() {
         const globalEnv = createGlobalEnv();
         const tree = new Tree(instructions, globalEnv)
 
-        for (const instruction of tree.instructions){
-            let value;
-            try {
-                value = instruction.interpret(tree, globalEnv);
-            } catch(err){
-                console.log("----------------------------------ERROR VAL----------------------------------")
-                console.log(err);
-                console.log("----------------------------------VALUE RETURNED----------------------------------")
-                console.log(value);
-                console.log("----------------------------------GLOBAL ENV----------------------------------")
-                console.log(globalEnv);
-                console.log("----------------------------------ERRORS FROM TREE----------------------------------")
-                console.log(tree.errors);
-                //expect(err).toBeFalsy();
-            }
-        }
-
+        storeAllSymbols(tree, globalEnv);
+        executeCode(tree, globalEnv)
     });
 
     it("Testing TestFile 1", function() {
@@ -66,6 +95,13 @@ describe("Testing parser logics", function() {
 
         const parser = new CompInterpreterParser();
         let instructions: Array<any> = parser.parse(data);
+
+
+        const globalEnv = createGlobalEnv();
+        const tree = new Tree(instructions, globalEnv)
+
+        storeAllSymbols(tree, globalEnv);
+        executeCode(tree, globalEnv)
     });
 
 
@@ -87,6 +123,13 @@ describe("Testing parser logics", function() {
 
         const parser = new CompInterpreterParser();
         let instructions: Array<any> = parser.parse(data);
+
+
+        const globalEnv = createGlobalEnv();
+        const tree = new Tree(instructions, globalEnv)
+
+        storeAllSymbols(tree, globalEnv);
+        executeCode(tree, globalEnv)
     });
 
 
@@ -108,6 +151,14 @@ describe("Testing parser logics", function() {
 
         const parser = new CompInterpreterParser();
         let instructions: Array<any> = parser.parse(data);
+
+
+        const globalEnv = createGlobalEnv();
+        const tree = new Tree(instructions, globalEnv)
+
+        // TODO this file is throwing an error
+        //storeAllSymbols(tree, globalEnv);
+        //executeCode(tree, globalEnv)
     });
 
 

@@ -23,6 +23,7 @@ function void main(){
     let relacional1: bool = 12 + 5 * 3 >= 56 * 5 / 21; //true
     let relacional2: bool = aritmetica1 + aritmetica3 == aritmetica2 * 5; //false
     relacional3 = (17 * 86 - 25 + 22 / 11) == 20; //false
+    // CORRECCION, ESTO DEVUELVE TRUE PORQUE 97 NO ES IGUAL A 80
     relacional4 = 'a' != 20 * 4; //el ascii de a es 97 y da false
 
     //y terminamos con las logicas
