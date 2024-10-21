@@ -51,14 +51,29 @@ export class CodeBlock implements Statement {
             if (retVar instanceof ReturnType){
                 if (retVar.type === TransferOp.BREAK || retVar.type === TransferOp.CONTINUE) {
                     // this operations return  an instance of type ReturnType({TransferOp.BREAK or TransferOp.CONTINUE}, null)
-                    return retVar;
+                    break
                 }
                 if (retVar.type === TransferOp.RETURN){
+                    debugger;
                     // this operations return  an instance of type ReturnType(TransferOp.RETURN, ReturnType)
-                    return retVar.value;
+                    break;
                 }
             }
         }
+
+
+        if (retVar instanceof ReturnType){
+            if (retVar.type === TransferOp.BREAK || retVar.type === TransferOp.CONTINUE) {
+                // this operations return  an instance of type ReturnType({TransferOp.BREAK or TransferOp.CONTINUE}, null)
+                return retVar;
+            }
+            if (retVar.type === TransferOp.RETURN){
+                debugger;
+                // this operations return  an instance of type ReturnType(TransferOp.RETURN, ReturnType)
+                return retVar;
+            }
+        }
+
 
         if (this.envType === Functions.FUNC){
             let err = new Exception("Semantic", `A Function must return a value`, this.line, this.column, this.envName);

@@ -6,6 +6,7 @@ import Tree from "../herramientas/arbol";
 import { Exception } from "../errores";
 import Symbol from "../herramientas/simbolos";
 import { Func, NativeFunc } from "../instrucciones/functions";
+import { If } from "../instrucciones/if";
 
 export interface VarArgs {
     id: string, val: Statement
@@ -37,12 +38,14 @@ export class CallFunc implements Statement {
         let symbol: Symbol;
         try{
             symbol = table.getSymbol(new Symbol(this.id, Primitive.NULL, null, Functions.FUNC, this.line, this.column, table));
+            if (symbol.environment.name === "Global" && symbol.id === "mcd"){
+                //console.log(symbol.value);
+            }
         } catch(err){
             throw err;
         }
 
         const calledFunc: Func = symbol.value;
-
 
         // Verify quantity of parameters
         if (this.argExpr.length !== 0 && calledFunc.args.length !== 0){
@@ -92,7 +95,9 @@ export class CallFunc implements Statement {
                 type CalledFuncArgs = { id: string, type: Primitive, deft?: Statement }
                 const matchingArg: Array<CalledFuncArgs> = (calledFunc.args.filter((argument) => argument.id === receivedArg.id) as Array<CalledFuncArgs>);
                 if (matchingArg.length === 1){
-                    const receivedValue: ReturnType = receivedArg.val.getValue(tree, funcEnv);
+                    const receivedValue: ReturnType = receivedArg.val.getValue(tree, table);
+                    //console.log(receivedValue);
+
                     const updateSymbol = new Symbol(receivedArg.id.toLowerCase(), receivedValue.type, receivedValue.value, VariableTypes.VAR, this.line, this.column, funcEnv);
                     funcEnv.updateSymbol(updateSymbol);
                 } else {
@@ -102,6 +107,7 @@ export class CallFunc implements Statement {
                 tree.errors.push(err as Exception); throw err;
             }
         }
+
 
         // LOOP THROUGH CALLEDFUNC ARGS TO VERIFY IF ALL PARAMETERS WHERE SET
         for (const calledFuncArg of calledFunc.args){
@@ -127,6 +133,12 @@ export class CallFunc implements Statement {
             }
         } else {
             try {
+                if (calledFunc.block.instructions[0] instanceof If && funcEnv.name === "func_env_mcd"){
+                    //console.log(calledFunc.block.instructions[7]);
+                    // @ts-ignore
+                    //console.log(calledFunc.block.instructions[0].condition.leftExp.getValue(tree, funcEnv));
+                    //console.log(calledFunc.block.instructions[0].condition.getValue(tree, funcEnv));
+                }
                 ret = calledFunc.block.interpret(tree, funcEnv);
             } catch (err) {
                 tree.errors.push(err as Exception); throw err;
@@ -136,8 +148,8 @@ export class CallFunc implements Statement {
         // a native function always returns a value too
         if (symbol.type === Functions.FUNC){
             if (ret instanceof ReturnType){
-                if (ret.type === calledFunc.retType){
-                    return ret;
+                if (ret.value.type === calledFunc.retType){
+                    return ret.value;
                 } else {
                     let err = new Exception("Type Error", `Variable of type '${ret.type}' can't return a '${calledFunc.retType}'`, this.line, this.column, funcEnv.name);
                     tree.errors.push(err);

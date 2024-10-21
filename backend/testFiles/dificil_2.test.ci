@@ -1,0 +1,52 @@
+EJECUTAR yaNoSaleCompi1();
+
+
+
+function void yaNoSaleCompi1(){
+    let valor_super_recursiva: int = 10;
+    echo "--------------------------------------------------------";
+    echo "------------------ ARCHIVO DIFICIL --------------------\n";
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- RECURSIVA ------------------------";
+    echo "super_recursiva de " + valor_super_recursiva + ": " + super_recursiva(n = valor_super_recursiva) + "\n";
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- PAR O IMPAR ----------------------";
+    echo par_o_impar(n = 10) + "\n";
+    echo par_o_impar(n = 11) + "\n";
+}
+
+
+function int super_recursiva(n: int){
+    if (n > 1) {
+        return super_recursiva(n = n - 1) + super_recursiva(n = n - 2);
+    } else if (n == 1) {
+        return 1;
+    } else if (n == 0) {
+        return 0;
+    } else {
+        echo "Error: n debe ser mayor o igual a 0";
+        return 0;
+    }
+}
+
+function string par_o_impar(n: int){
+    return if (n % 2 == 0) "El numero " + n + " es PAR" : "El numero " + n + " es IMPAR";
+}
+
+
+// salida
+/*
+--------------------------------------------------------
+------------------ ARCHIVO DIFICIL --------------------
+
+--------------------------------------------------------
+--------------------- RECURSIVA ------------------------
+super_recursiva de 10: 55
+
+--------------------------------------------------------
+--------------------- PAR O IMPAR ----------------------
+El numero 10 es PAR
+El numero 11 es IMPAR
+*/

@@ -39,6 +39,7 @@ export class For implements Statement {
         const newForEnv: Environment = new Environment(table, "for_env");
         tree.envs.push(newForEnv);
 
+
         // Check if variable declaration is valid
         try {
             this.variable.interpret(tree, newForEnv);

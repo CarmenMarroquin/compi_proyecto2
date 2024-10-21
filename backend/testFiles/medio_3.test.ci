@@ -1,0 +1,48 @@
+// Comentarios de una línea y multilínea
+// Esto es un comentario de una sola línea
+/* Este es un comentario
+de múltiples líneas */
+// Declaración de variables globales
+let x: int = 10;
+let y: double = 5.5;
+let mensaje: string = "Hola Mundo";
+let suma: double;
+let resta: int;
+let potencia: int;
+let modulo: double;
+let esMayor: bool;
+let resultado: string;
+// Función principal
+function void main() {
+    // Operaciones aritméticas
+    suma = x + y;
+    resta = x - 3;
+    potencia = x ^ 2;
+    modulo = x % 3;
+    // Uso de operadores relacionales y lógicos
+    esMayor = x > y && x != 0;
+    // Condicionales con IF
+    if (esMayor) {
+        echo "X es mayor que Y y no es cero";
+    } else {
+        echo "X no es mayor que Y o es cero";
+    }
+    // Uso de un operador ternario
+    resultado = if (suma > 15) "Mayor a 15" : "Menor o igual a 15";
+    // Ciclo FOR
+    for (let i: int = 0; i < 5; i++) {
+        echo "El valor de i es: " + i;
+    }
+    // Llamadas a funciones y métodos
+    let resultadoSuma: int = sumaNumeros(a=3, b=7);
+    imprimirMensaje(mensaje = "La suma de 3 y 7 es: " +resultadoSuma);
+}
+// Funciones y métodos
+function int sumaNumeros(a: int, b: int) {
+    return a + b;
+}
+function void imprimirMensaje(mensaje: string) {
+    echo mensaje; 
+}
+    // Sentencia ejecutar
+ejecutar main();

@@ -1,0 +1,75 @@
+EJECUTAR main();
+
+let var1: int = 0;
+
+let arreglo1: int[] = new vector int [5];
+
+let arreglo2: int[] = [0, 0, 1, 2, 0, 0, 5, 1, 0, 0, 8, 0, 0];
+
+function void main(){
+    echo "Archivo de prueba 1 \n";
+    echo "Si sale compi1 ";
+
+    let var1: int = 10;
+    if (var1 != 10) {
+        echo "Manejo de entornos erroneo :(";
+    } else {
+        echo "Manejo de entornos correcto :D";
+    }
+
+    tablaMultiplicar(valor = 7);
+
+    RecursividadBasica();
+
+    AnalizarArreglo();
+}
+
+function void tablaMultiplicar(valor: int){
+    echo "Tabla de multiplicar de " + valor;
+    for (let i: int = 0; i <= 20; i++) {
+        if (i < 11) {
+            if (i == 0) {
+                continue;
+            } else {
+                echo "" + valor + " x " + i + " = " + (valor * i);
+            }
+        } else {
+            break;
+            echo "Esto no debe de imprimirse nunca";
+        }
+    }
+}
+
+
+function void RecursividadBasica(){
+    let resultado: double = mcd(b = 18.0, a = 48.0);
+    if (resultado == 6) {
+        echo "Recursividad basica correcta";
+        return;
+    }
+    echo "Recursividad basica incorrecta";
+}
+
+function double mcd(a: double, b: double){
+    if (b == 0) {
+        return a;
+    }
+    return mcd(a = b, b = a % b);
+}
+
+function void AnalizarArreglo(){
+    let temporal, suma, ceros: int = 0;
+    for (let i: int = 0; i < len(arreglo2); i++) {
+        temporal = arreglo2[i];
+        if (temporal == 0) {
+            ceros++;
+            continue;
+        }
+        suma = suma + temporal;
+
+        continue;
+        echo "Esto no debe de imprimirse nunca";
+    }
+    echo "La suma de los elementos de arreglo2 es: " + suma;
+    echo "La cantidad de ceros en el arreglo es: " + ceros;
+}

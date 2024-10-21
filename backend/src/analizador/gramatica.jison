@@ -218,8 +218,7 @@ entorno_global:
 ;
 
 global:
-    declaracion_vectores TK_PUNTO_COMA      { $$ = $1; }
-|   declaracion_variables TK_PUNTO_COMA     { $$ = $1; }
+    declaracion_variables TK_PUNTO_COMA     { $$ = $1; }
 |   declaracion_constantes TK_PUNTO_COMA    { $$ = $1; }
 |   declaracion_metodos                     { $$ = $1; }
 |   declaracion_funciones                   { $$ = $1; }
@@ -233,8 +232,7 @@ instrucciones:
 
 instruccion : 
 /*----------------------------DECLARACION----------------------------*/
-    declaracion_vectores TK_PUNTO_COMA      { $$ = $1; }
-|   declaracion_variables TK_PUNTO_COMA     { $$ = $1; } 
+    declaracion_variables TK_PUNTO_COMA     { $$ = $1; } 
 |   declaracion_constantes TK_PUNTO_COMA    { $$ = $1; }
 /*----------------------------ASIGNACION----------------------------*/
 |   asignacion_variables TK_PUNTO_COMA      { $$ = $1; }
@@ -251,8 +249,8 @@ instruccion :
 /*----------------------------FUNCIONES----------------------------*/
 //|   declaracion_funciones TK_PUNTO_COMA
 //|   delcaracion_metodos
-|   llamadas TK_PUNTO_COMA  { $$ = $1; }
-|   echo TK_PUNTO_COMA      { $$ = $1; }
+|   llamadas TK_PUNTO_COMA          { $$ = $1; }
+|   echo TK_PUNTO_COMA              { $$ = $1; }
 ;
 
 /* 
@@ -369,7 +367,11 @@ incremento_decremento:
 +++++++++++++++++++++++++++++
 */
 declaracion_variables:
-    RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion    { $$ = new VarDeclaration($2, $4, $6, @1.first_line, @1.first_column); }
+    RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vector { $$ = new VectorDeclaration($2[0], $4, $8, @1.first_line, @1.first_column); }
+|   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vectores   { $$ = new VectorDeclaration($2[0], $4, $10, @1.first_line, @1.first_column); }
+|   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE  { $$ = new VectorDeclaration($2[0], $4, $9, @1.first_line, @1.first_column); }
+|   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_vectores TK_DCORCHETE { $$ = new VectorDeclaration($2[0], $4, $11, @1.first_line, @1.first_column); }
+|   RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion    { $$ = new VarDeclaration($2, $4, $6, @1.first_line, @1.first_column); }
 |   RW_LET identificadores TK_DOS_PUNTOS tipo                       { $$ = new VarDeclaration($2, $4, undefined, @1.first_line, @1.first_column); }
 ;
 
@@ -391,14 +393,6 @@ tipo:
 |   RW_CHAR     { $$ = Primitive.CHAR; }
 |   RW_NULL     { $$ = Primitive.NULL; }
 ;
-
-declaracion_vectores:
-    RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vector { $$ = new VectorDeclaration($2, $4, $8, @1.first_line, @1.first_column); }
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vectores   { $$ = new VectorDeclaration($2, $4, $10, @1.first_line, @1.first_column); }
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE  { $$ = new VectorDeclaration($2, $4, $9, @1.first_line, @1.first_column); }
-|   RW_LET TK_ID TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_vectores TK_DCORCHETE { $$ = new VectorDeclaration($2, $4, $11, @1.first_line, @1.first_column); }
-;
-
 
 lista_valores:
     lista_valores TK_COMA expresion { $1.values.push($3); $1.length += 1; $$ = $1; }
@@ -554,13 +548,10 @@ is_value:
 llamadas:
     TK_ID TK_IPAR parametros_llamada TK_DPAR    { $$ = new CallFunc($1, $3, @1.first_line, @1.first_column); }
 |   TK_ID TK_IPAR TK_DPAR                       { $$ = new CallFunc($1, [], @1.first_line, @1.first_column); }
+|   TK_ID TK_IPAR expresion TK_DPAR             { $$ = new CallFunc($1, [{id: "arg", val: $3}], @1.first_line, @1.first_column); }
 ;
 
 parametros_llamada:
     parametros_llamada TK_COMA TK_ID TK_IGUAL expresion { $1.push({id: $3, val: $5}); $$ = $1; }
 |   TK_ID TK_IGUAL expresion    { $$ = [{id: $1, val: $3}]; }
-;
-
-llamada_nativa:
-    TK_ID TK_IPAR expresion TK_DPAR { $$ = new CallFunc($1, [{id: "arg", val: $3}], @1.first_line, @1.first_column); }
 ;

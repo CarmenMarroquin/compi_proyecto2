@@ -442,20 +442,36 @@ export class Arithmetic implements Statement {
         if (leftResult.type === Primitive.INT){
             switch (rightResult.type){
                 case Primitive.INT: {
-                    return new ReturnType(Primitive.DOUBLE, leftResult.value % rightResult.value);
+                    let calc = leftResult.value % rightResult.value;
+                    if (rightResult.value === 0){
+                        throw new Exception("Type Error", `"%" not supported between instances of ${leftResult.value} and ${rightResult.value}`, this.line, this.column, table.name);
+                    }
+                    return new ReturnType(Primitive.DOUBLE, calc);
                 }
                 case Primitive.DOUBLE: {
-                    return new ReturnType(Primitive.DOUBLE, leftResult.value % rightResult.value);
+                    let calc = leftResult.value % rightResult.value;
+                    if (rightResult.value === 0){
+                        throw new Exception("Type Error", `"%" not supported between instances of ${leftResult.value} and ${rightResult.value}`, this.line, this.column, table.name);
+                    }
+                    return new ReturnType(Primitive.DOUBLE, calc);
                 }
             }
         }
         if (leftResult.type === Primitive.DOUBLE){
             switch (rightResult.type){
                 case Primitive.INT: {
-                    return new ReturnType(Primitive.DOUBLE, leftResult.value % rightResult.value);
+                    let calc = leftResult.value % rightResult.value;
+                    if (rightResult.value === 0){
+                        throw new Exception("Type Error", `"%" not supported between instances of ${leftResult.value} and ${rightResult.value}`, this.line, this.column, table.name);
+                    }
+                    return new ReturnType(Primitive.DOUBLE, calc);
                 }
                 case Primitive.DOUBLE: {
-                    return new ReturnType(Primitive.DOUBLE, leftResult.value % rightResult.value);
+                    let calc = leftResult.value % rightResult.value;
+                    if (rightResult.value === 0){
+                        throw new Exception("Type Error", `"%" not supported between instances of ${leftResult.value} and ${rightResult.value}`, this.line, this.column, table.name);
+                    }
+                    return new ReturnType(Primitive.DOUBLE, calc);
                 }
             }
         }

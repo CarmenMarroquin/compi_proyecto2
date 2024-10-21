@@ -1,0 +1,17 @@
+Ejecutar main();
+
+function void main(){
+   let hola: int = 6;
+   echo SumaEnteros(num1 = 12, num2 = hola);
+}
+
+function int SumaEnteros(num1:int, num2:int){
+    let A: int = 0;      
+    while (true){
+        if(A == 10){
+            return num1+num2;
+        }
+        A++;
+    }
+}
+

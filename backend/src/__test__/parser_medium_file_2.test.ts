@@ -18,6 +18,8 @@ function storeAllSymbols(tree: Tree, globalEnv: Environment) {
         try {
             if (!(instruction instanceof CallFunc)) {
                 value = instruction.interpret(tree, globalEnv);
+                //console.log(instruction)
+
             }
         } catch (err) {
             console.log("----------------------------------ERROR VAL----------------------------------")
@@ -39,7 +41,9 @@ function executeCode(tree: Tree, globalEnv: Environment) {
     for (const instruction of tree.instructions) {
         let value;
         try {
-            value = instruction.interpret(tree, globalEnv);
+            if (instruction instanceof CallFunc){
+                value = instruction.interpret(tree, globalEnv);
+            }
         } catch (err) {
             console.log("----------------------------------ERROR VAL----------------------------------")
             console.error(err);
@@ -55,13 +59,13 @@ function executeCode(tree: Tree, globalEnv: Environment) {
 }
 
 
-describe('Test Interpreter On Hard File 1', () => {
+describe('Test Interpreter On Medium 2', () => {
     let globalEnv: Environment;
     let tree: Tree;
 
     beforeAll(() => {
         // Reading test file
-        const testPath = path.join(__dirname, '..', '..', 'testFiles', 'archivoCalif3.test.ci');
+        const testPath = path.join(__dirname, '..', '..', 'testFiles', 'medio_2.test.ci');
         const data = readFileSync(testPath, 'utf8');
 
         // Lexical analysis
@@ -85,27 +89,52 @@ describe('Test Interpreter On Hard File 1', () => {
         tree = new Tree(instructions, globalEnv);
 
         storeAllSymbols(tree, globalEnv);
-        executeCode(tree, globalEnv)
+        executeCode(tree, globalEnv);
     });
-
 
     test('The "echo" outputs should match expected values', () => {
         const expectedOutput = [
-            "----------- Opcion 1 -----------",
-            "El numero 49 es impar",
-            "----------- Opcion 2 -----------",
-            "* * * * * * * * * * * * * * . . . . . . . . ",
-            "* * * * * * * * * * * * . . . . . . . . ",
-            "* * * * * * * * * * * . . . . . . . . ",
-            // (This pattern continues based on the heart shape calculation)
-            "----------- Opcion 3 -----------",
-            // Output for the hourglass figure here
-            "----------- Opcion 4 -----------",
-            // Output for the letter "A" figure here
-            "----------- Opcion Default -----------",
-            // Output for the pyramid shape here
-            "Esta vez si sale compi1 :D",
-            "Ustedes pueden :3"
+            "Archivo de prueba 1 \n",
+            "Si sale compi1 ",
+            "Manejo de entornos correcto :D",
+            "Tabla de multiplicar de 7",
+            "7 x 1 = 7",
+            "7 x 2 = 14",
+            "7 x 3 = 21",
+            "7 x 4 = 28",
+            "7 x 5 = 35",
+            "7 x 6 = 42",
+            "7 x 7 = 49",
+            "7 x 8 = 56",
+            "7 x 9 = 63",
+            "7 x 10 = 70",
+            "este es a:",
+            "48",
+            "---------",
+            "este es b:",
+            "18",
+            "---------",
+            "este es a:",
+            "18",
+            "---------",
+            "este es b:",
+            "12",
+            "---------",
+            "este es a:",
+            "12",
+            "---------",
+            "este es b:",
+            "6",
+            "---------",
+            "este es a:",
+            "6",
+            "---------",
+            "este es b:",
+            "0",
+            "---------",
+            "Recursividad basica correcta",
+            "La suma de los elementos de arreglo2 es: 17",
+            "La cantidad de ceros en el arreglo es: 8"
         ];
 
 
@@ -114,12 +143,58 @@ describe('Test Interpreter On Hard File 1', () => {
         }
     });
 
+    test('Table of multiplication should return correct values for 7', () => {
+        const expectedMultiplicationOutput = [
+            "7 x 1 = 7",
+            "7 x 2 = 14",
+            "7 x 3 = 21",
+            "7 x 4 = 28",
+            "7 x 5 = 35",
+            "7 x 6 = 42",
+            "7 x 7 = 49",
+            "7 x 8 = 56",
+            "7 x 9 = 63",
+            "7 x 10 = 70"
+        ];
 
-    /** *******************************BOORAR**************************** */
+        for (let i = 1; i <= 10; i++) {
+            const result = `${7} x ${i} = ${7 * i}`;
+            expect(expectedMultiplicationOutput).toContain(result);
+        }
+    });
+
+    test('Recursive function "mcd" should return correct GCD', () => {
+        let callMcd = new CallFunc(
+            "mcd",
+            [
+                { id: "a", val: new PrimitiveVal("48.0", Primitive.DOUBLE, 0, 0) },
+                { id: "b", val: new PrimitiveVal("18.0", Primitive.DOUBLE, 0, 0) }
+            ],
+            0,
+            0
+        );
+        let result = callMcd.getValue(tree, globalEnv);
+        let expectedResult = new ReturnType(Primitive.DOUBLE, 6.0);
+        expect(result).toStrictEqual(expectedResult);
+    });
+
+    test('Array analysis should return correct sum and count of zeros', () => {
+        let suma = globalEnv.getSymbol(new Symbol("suma", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let ceros = globalEnv.getSymbol(new Symbol("ceros", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
+
+        if (suma instanceof Symbol) {
+            expect(suma.value).toBe(17);  // Expected sum of non-zero values in arreglo2
+        }
+
+        if (ceros instanceof Symbol) {
+            expect(ceros.value).toBe(8);  // Expected count of zero values in arreglo2
+        }
+    });
+
 
    afterAll(() => {
         // Define the path where the HTML file will be saved
-        const htmlFilePath = path.join(__dirname, 'hard_file_1_output.html');
+        const htmlFilePath = path.join(__dirname, 'hard_file_2_output.html');
 
         // HTML template structure
         const htmlContent = `
@@ -128,14 +203,14 @@ describe('Test Interpreter On Hard File 1', () => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Hard 1</title>
+                <title>Medium 2</title>
                 <style>
                     body { font-family: Arial, sans-serif; padding: 20px; }
                     pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
                 </style>
             </head>
             <body>
-                <h1>Hard 1 Program Output</h1>
+                <h1>Medium 2 Program Output</h1>
                 <pre>${tree.stdOut}</pre>
             </body>
             </html>

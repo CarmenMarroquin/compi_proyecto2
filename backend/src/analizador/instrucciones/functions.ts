@@ -46,11 +46,11 @@ export class Function extends Func {
             Functions.FUNC,
             this.line,
             this.column,
-            table
+            table.getGlobalEnv()
         );
 
         try{
-            table.setSymbol(symbol);
+            table.getGlobalEnv().setSymbol(symbol);
         }catch(err){
             tree.errors.push(err as Exception); throw err;
         }

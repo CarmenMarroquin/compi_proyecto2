@@ -1,0 +1,15 @@
+Ejecutar main();
+
+function void main(){
+
+     let beca: int = recursiva(a = 12);
+     echo ">>"+beca+"<<";
+}
+
+function int recursiva(a:int){
+    if (a == 13){
+//echo a+"<<";
+       return a;
+    }
+    return recursiva(a = 13);
+}

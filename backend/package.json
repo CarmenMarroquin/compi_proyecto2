@@ -5,11 +5,12 @@
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --forceExit --runInBand --detectOpenHandles --config=jest.config.js",
     "test:watch": "cross-env NODE_ENV=test jest --watch --watchAll --forceExit --runInBand --detectOpenHandles --config=jest.config.js",
-    "start": "node build/index",
+    "start": "node --inspect build/index",
     "build": "tsc",
-    "dev": "ts-node-dev src/index",
+    "dev": "ts-node-dev src/index --inspect src/index",
     "jison": "jison -t tsconfig.json -n CompInterpreter -n CompInterpreter -o src/analizador/gramatica.ts src/analizador/gramatica.jison",
     "ts-jison": "ts-jison -t typescript -n CompInterpreter -n CompInterpreter -o src/analizador/gramatica.ts src/analizador/gramatica.jison",
+    "debug": "nodemon --config nodemon.json --inspect src/index.ts",
     "ts-jison:debug": "ts-jison -t typescript -n CompInterpreter -n CompInterpreter -o src/analizador/gramatica.ts src/analizador/gramatica.jison --debug"
   },
   "dependencies": {

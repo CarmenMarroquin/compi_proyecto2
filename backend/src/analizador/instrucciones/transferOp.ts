@@ -81,7 +81,6 @@ export class Return implements Statement {
             if (this.func !== undefined){
                 res = this.func(res)
             }
-
         } catch(err){
             tree.errors.push(err as Exception); throw err;
         }
