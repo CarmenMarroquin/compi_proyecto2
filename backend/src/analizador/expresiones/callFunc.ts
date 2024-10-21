@@ -48,22 +48,21 @@ export class CallFunc implements Statement {
         const calledFunc: Func = symbol.value;
 
         // Verify quantity of parameters
-        if (this.argExpr.length !== 0 && calledFunc.args.length !== 0){
-            if (this.argExpr.length > calledFunc.args.length) {
-                let err = new Exception('Sementic', `${this.id} expected ${calledFunc.args.length} parameters, ${this.argExpr.length} given`, this.line, this.column, table.name);
-                tree.errors.push(err);
-                throw err;
-            }
+        //if (this.argExpr.length !== 0 && calledFunc.args.length !== 0){
+        if (this.argExpr.length > calledFunc.args.length){
+            let err = new Exception('Sementic', `${this.id} expected ${calledFunc.args.length} parameters, ${this.argExpr.length} given`, this.line, this.column, table.name);
+            tree.errors.push(err);
+            throw err;
         } else if (this.argExpr.length === 0 && calledFunc.args.length === 0){
-
+        } else if (this.argExpr.length <= calledFunc.args.length){
         } else {
             // TODO modify this if there is an error calling a function
             if (this.argExpr.length !== 0){
-                let err = new Exception('Sementic', `${this.id} expected ${this.argExpr.length} parameters, ${0} given`, this.line, this.column, table.name);
+                let err = new Exception('Sementic', `++++${this.id} expected ${this.argExpr.length} parameters, ${calledFunc.args.length} given`, this.line, this.column, table.name);
                 tree.errors.push(err);
                 throw err;
             } else {
-                let err = new Exception('Sementic', `${this.id} expected ${0} parameters, ${calledFunc.args.length} given`, this.line, this.column, table.name);
+                let err = new Exception('Sementic', `----${this.id} expected ${0} parameters, ${calledFunc.args.length} given`, this.line, this.column, table.name);
                 tree.errors.push(err);
                 throw err;
             }

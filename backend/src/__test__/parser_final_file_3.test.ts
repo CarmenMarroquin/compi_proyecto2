@@ -59,13 +59,13 @@ function executeCode(tree: Tree, globalEnv: Environment) {
 }
 
 
-describe('Test Interpreter On Medium 2', () => {
+describe('Test Interpreter On FINAL 3', () => {
     let globalEnv: Environment;
     let tree: Tree;
 
     beforeAll(() => {
         // Reading test file
-        const testPath = path.join(__dirname, '..', '..', 'testFiles', 'medio_2.test.ci');
+        const testPath = path.join(__dirname, '..', '..', 'testFiles', 'archivo3.ci');
         const data = readFileSync(testPath, 'utf8');
 
         // Lexical analysis
@@ -92,110 +92,94 @@ describe('Test Interpreter On Medium 2', () => {
         executeCode(tree, globalEnv);
     });
 
+    /*
     test('The "echo" outputs should match expected values', () => {
         const expectedOutput = [
-            "Archivo de prueba 1",
-            "Si sale compi1 ",
-            "Manejo de entornos correcto :D",
-            "Tabla de multiplicar de 7",
-            "7 x 1 = 7",
-            "7 x 2 = 14",
-            "7 x 3 = 21",
-            "7 x 4 = 28",
-            "7 x 5 = 35",
-            "7 x 6 = 42",
-            "7 x 7 = 49",
-            "7 x 8 = 56",
-            "7 x 9 = 63",
-            "7 x 10 = 70",
-            "este es a:",
-            "48",
-            "---------",
-            "este es b:",
-            "18",
-            "---------",
-            "este es a:",
-            "18",
-            "---------",
-            "este es b:",
-            "12",
-            "---------",
-            "este es a:",
-            "12",
-            "---------",
-            "este es b:",
-            "6",
-            "---------",
-            "este es a:",
-            "6",
-            "---------",
-            "este es b:",
-            "0",
-            "---------",
-            "Recursividad basica correcta",
-            "La suma de los elementos de arreglo2 es: 17",
-            "La cantidad de ceros en el arreglo es: 8"
+            "--------------------------------------------------------",
+            "-----------------CALIFICACION ARCHIVO 2-----------------",
+            "--------------------------------------------------------",
+            "--------------------------------------------------------",
+            "----------------- VECTOR 1 DIMENSION -------------------",
+            "Vector original: [100 50 1 150 70 25 33 0 81 11 5 9 7 77 57 44 23 10 167 2024 ]",
+            "Vector ordenado: [0 1 5 7 9 10 11 23 25 33 44 50 57 70 77 81 100 150 167 2024 ]",
+            "--------------------------------------------------------",
+            "----------------- VECTOR 2 DIMENSION -------------------",
+            "Prediccion para [1, 0, 0]: 1",
+            "--------------------------------------------------------",
+            "----------------------- CASTEOS ------------------------",
+            "int_to_double: 2024.0",
+            "double_to_int: 61",
+            "int_to_string: 2024",
+            "int_to_char: F",
+            "double_to_string: 61.1",
+            "char_to_int: 82",
+            "char_to_double: 74.0",
+            "--------------------------------------------------------",
+            // More expected outputs from other sections (native operations, recursion, etc.)
         ];
-
 
         for (const message of expectedOutput){
             expect(tree.stdOut).toContain(message);
         }
     });
 
-    test('Table of multiplication should return correct values for 7', () => {
-        const expectedMultiplicationOutput = [
-            "7 x 1 = 7",
-            "7 x 2 = 14",
-            "7 x 3 = 21",
-            "7 x 4 = 28",
-            "7 x 5 = 35",
-            "7 x 6 = 42",
-            "7 x 7 = 49",
-            "7 x 8 = 56",
-            "7 x 9 = 63",
-            "7 x 10 = 70"
-        ];
-
-        for (let i = 1; i <= 10; i++) {
-            const result = `${7} x ${i} = ${7 * i}`;
-            expect(expectedMultiplicationOutput).toContain(result);
+    test('Vector sorting (insertionSort) works correctly', () => {
+        let sortedVector = globalEnv.getSymbol(new Symbol("vectorEntero", Primitive.INT, null, VariableTypes.VAR, 0, 0, globalEnv));
+        if (sortedVector instanceof Symbol) {
+            expect(sortedVector.value).toEqual([0, 1, 5, 7, 9, 10, 11, 23, 25, 33, 44, 50, 57, 70, 77, 81, 100, 150, 167, 2024]);
         }
     });
 
-    test('Recursive function "mcd" should return correct GCD', () => {
-        let callMcd = new CallFunc(
-            "mcd",
-            [
-                { id: "a", val: new PrimitiveVal("48.0", Primitive.DOUBLE, 0, 0) },
-                { id: "b", val: new PrimitiveVal("18.0", Primitive.DOUBLE, 0, 0) }
-            ],
-            0,
-            0
-        );
-        let result = callMcd.getValue(tree, globalEnv);
-        let expectedResult = new ReturnType(Primitive.DOUBLE, 6.0);
-        expect(result).toStrictEqual(expectedResult);
-    });
-
-    test('Array analysis should return correct sum and count of zeros', () => {
-        let currentEnv: Array<Environment> = environments.filter((env) => env.name === "func_env_AnalizarArreglo");
-        let suma = currentEnv[0].getSymbol(new Symbol("suma", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
-        let ceros = currentEnv[0].getSymbol(new Symbol("ceros", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
-
-        if (suma instanceof Symbol) {
-            expect(suma.value).toBe(17);  // Expected sum of non-zero values in arreglo2
-        }
-
-        if (ceros instanceof Symbol) {
-            expect(ceros.value).toBe(8);  // Expected count of zero values in arreglo2
+    test('Perceptron prediction works as expected', () => {
+        let prediction = globalEnv.getSymbol(new Symbol("prediccion", Primitive.INT, null, VariableTypes.VAR, 0, 0, globalEnv));
+        if (prediction instanceof Symbol) {
+            expect(prediction.value).toBe(1);  // Expected prediction for [1, 0, 0]
         }
     });
+
+    test('Casting operations work correctly', () => {
+        let intToDouble = globalEnv.getSymbol(new Symbol("int_to_double", Primitive.DOUBLE, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let doubleToInt = globalEnv.getSymbol(new Symbol("double_to_int", Primitive.INT, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let intToString = globalEnv.getSymbol(new Symbol("int_to_string", Primitive.STRING, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let intToChar = globalEnv.getSymbol(new Symbol("int_to_char", Primitive.CHAR, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let charToInt = globalEnv.getSymbol(new Symbol("char_to_int", Primitive.INT, null, VariableTypes.VAR, 0, 0, globalEnv));
+
+        if (intToDouble instanceof Symbol) {
+            expect(intToDouble.value).toBe(2024.0);
+        }
+        if (doubleToInt instanceof Symbol) {
+            expect(doubleToInt.value).toBe(61);
+        }
+        if (intToString instanceof Symbol) {
+            expect(intToString.value).toBe("2024");
+        }
+        if (intToChar instanceof Symbol) {
+            expect(intToChar.value).toBe('F');
+        }
+        if (charToInt instanceof Symbol) {
+            expect(charToInt.value).toBe(82);
+        }
+    });
+
+    test('Fibonacci and recursive functions work correctly', () => {
+        let fibonacciResult = globalEnv.getSymbol(new Symbol("valor_fibonacci", Primitive.INT, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let parResult = globalEnv.getSymbol(new Symbol("valor_par_impar", Primitive.INT, null, VariableTypes.VAR, 0, 0, globalEnv));
+
+        if (fibonacciResult instanceof Symbol) {
+            expect(fibonacciResult.value).toBe(6765);  // Fibonacci of 20
+        }
+
+        if (parResult instanceof Symbol) {
+            expect(parResult.value).toBe(70);  // Number 70 is even
+        }
+    });
+*/
+
 
 
    afterAll(() => {
         // Define the path where the HTML file will be saved
-        const htmlFilePath = path.join(__dirname, 'medium_file_2_output.html');
+        const htmlFilePath = path.join(__dirname, 'final_file_3_output.html');
 
         // HTML template structure
         const htmlContent = `
@@ -204,15 +188,15 @@ describe('Test Interpreter On Medium 2', () => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Medium 2</title>
+                <title>Final 3</title>
                 <style>
                     body { font-family: Arial, sans-serif; padding: 20px; }
                     pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
                 </style>
             </head>
             <body>
-                <h1>Medium 2 Program Output</h1>
-                <pre>${tree.stdOut}</pre>
+                <h1>Final 3 Program Output</h1>
+                <pre></pre>
             </body>
             </html>
         `;

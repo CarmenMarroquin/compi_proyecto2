@@ -1,8 +1,11 @@
-
-import Dropdown from 'react-bootstrap/Dropdown';
-import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import { useEffect, useState } from 'react';
+import React from 'react';
+import OutputText from './OutputText';
+import OutputErrors from './OutputErrors';
+import OutputSymbols from './OutputSymTable';
+import OutputImage from './OutputImage';
+
+import '../scss/Terminal.scss';
 
 export enum Estado{
   Consola,
@@ -11,12 +14,18 @@ export enum Estado{
   Simbolos
 }
 
+type Errors = {
+  lex: Array<any>,
+  sem: Array<any>,
+  syn: Array<any>
+}
+
 type Props = {
   estado: Estado,
   consola: string,
   ast: string,
-  errores: string,
-  simbolos: string
+  errores: Errors,
+  simbolos: Array<any>
 }
 
 
@@ -30,21 +39,23 @@ function Consola({estado, consola, ast, errores, simbolos}: Props) {
   }[estado];
 
   const contenido = {
-    [Estado.Consola]: consola,
-    [Estado.Simbolos]: simbolos,
-    [Estado.Ast]: ast,
-    [Estado.Errores]: errores
+    [Estado.Consola]: <OutputText errors={errores} stdOut={consola}/>,
+    [Estado.Simbolos]: <OutputSymbols  symTable={simbolos}/>,
+    [Estado.Ast]: <OutputImage dotCode={ast} />,
+    [Estado.Errores]: <OutputErrors errors={errores} />,
   }[estado];
 
+
     return (
-    <Form.Group controlId="exampleForm.ControlTextarea">
-      <Form.Label>{titulo}</Form.Label>
-      <div style={{ border: '1px solid #ced4da', padding: '10px', borderRadius: '5px', minHeight: '100px', backgroundColor: '#f8f9fa' }}>
+      <div>
+      <h2>{titulo}</h2>
+      <div className="terminal">
         {contenido}
       </div>
-    </Form.Group>
+        </div>
     );
   }
-  
+
+
   export default Consola;
 

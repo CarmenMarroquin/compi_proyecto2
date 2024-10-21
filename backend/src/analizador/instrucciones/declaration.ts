@@ -194,6 +194,7 @@ export class ConstDeclaration implements Statement {
     }
 
     getAST(): Node {
+
         let node: Node = new Node("CONST_DECLARE")
         for (let variable of this.vars){
             node.addChild(variable);
@@ -291,6 +292,10 @@ export class VectorDeclaration implements Statement {
     // TODO
     getAST(): Node {
         let node: Node = new Node("VECTOR_DECLARE")
+        node.addChild(this.id);
+        node.addChild(this.dataType);
+
+        node.addChildsNode(this.vector.getAST());
         return node;
     }
 }

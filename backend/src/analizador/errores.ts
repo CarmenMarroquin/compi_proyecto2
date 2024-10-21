@@ -21,12 +21,12 @@ export class SynError implements Error {
     public line;
     public column;
     public token: any;
-    public type: string;
-    constructor(line: number, column: number, type: string, token: string){
+    public expected: Array<string>;
+    constructor(line: number, column: number, token: string, expected: Array<string>){
         this.line = line;
         this.column = column;
         this.token = token;
-        this.type = type;
+        this.expected = expected;
     }
 
     // TODO

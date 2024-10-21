@@ -7,6 +7,8 @@ import { Primitive, VariableTypes } from "../herramientas/tipos";
 import Symbol from "../herramientas/simbolos";
 
 
+
+
 export class SetVar implements Statement {
     public id: string;
     public expression: Statement;
@@ -69,6 +71,7 @@ export class SetVar implements Statement {
             }
         }
     }
+
 
     getAST(): Node{
         let node: Node = new Node("SET");

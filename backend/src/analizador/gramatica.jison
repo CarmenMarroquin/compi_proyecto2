@@ -220,6 +220,7 @@ entorno_global:
 global:
     declaracion_variables TK_PUNTO_COMA     { $$ = $1; }
 |   declaracion_constantes TK_PUNTO_COMA    { $$ = $1; }
+|   asignacion_variables TK_PUNTO_COMA      { $$ = $1; }
 |   declaracion_metodos                     { $$ = $1; }
 |   declaracion_funciones                   { $$ = $1; }
 |   ejecutar TK_PUNTO_COMA                  { $$ = $1; }

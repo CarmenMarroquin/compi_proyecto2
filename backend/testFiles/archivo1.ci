@@ -1,0 +1,479 @@
+let var1: int;
+const var2: int = 10;
+let var3, var4: int;
+const var5: double = 10 / 3;
+
+let notaArchivo1: double = 0.0;
+
+EJECUTAR main();
+
+function void main(){
+    echo "--------------------------------------------------------";
+    echo "-----------------CALIFICACION ARCHIVO 1-----------------";
+    echo "--------------------------------------------------------";
+    let var1: int = 100;
+
+    // ambitos
+    if (var1 != 100) {
+        echo "No se tomo la variable local antes de la global";
+        echo ":(";
+    } else {
+        echo "Prioridad de variable local correcta";
+        echo "nota Ambitos 1";
+        notaArchivo1 = notaArchivo1 + 1;
+    }
+
+    // Declaracion de variables
+    Declaraciones();
+
+    // Asignacion de variables
+    Asignacion();
+
+    // Constantes
+    Constantes();
+
+    //operaciones artimeticas
+    Aritmeticas();
+
+    //operaciones logicas
+    Logicas();
+
+    //operaciones relacionales
+    Relacionales();
+
+    echo "--------------------------------------------------------";
+    echo "Funcion ejecutar: +1";
+    echo "Funcion echo: +1";
+    echo "llamada sin parametros: +1";
+    echo "llamada con parametros: +1";
+
+    notaArchivo1 = notaArchivo1 + 4;
+
+
+    // Nota Final
+    echo "--------------------------------------------------------";
+    echo "Nota Final Archivo 1: " + notaArchivo1;
+    echo "--------------------------------------------------------";
+}
+
+function void Declaraciones(){
+    echo "--------------------------------------------------------";
+    echo "-----------------DECLARACION DE VARIABLES-----------------";
+    echo "--------------------------------------------------------";
+
+    let notaDeclaraciones: double = 0.0;
+
+    let i, j, k: int = 1;
+    let l: int = 1;
+
+    const mensaje1, mensaje2, mensaje3: string = "Voy a ganar compi";
+    const mensaje4: string = "Voy a ganar compi";
+
+    let caracter1, caracter2, caracter3: char = '1';
+    let caracter4: char = '1';
+
+    const decimal1, decimal2, decimal3: double;
+    const decimal4: double = 10.5;
+
+    let booleano1, booleano2, booleano3: bool = true;
+    let booleano4: bool = true;
+
+    //vamos a ver si el default funciona (null)
+    if (decimal1 != null || decimal3 != null) {
+        echo "No se inicializaron las variables double correctamente";
+    } else {
+        echo "Se inicializaron las variables double correctamente";
+        notaDeclaraciones = notaDeclaraciones + 0.25;
+    }
+
+    if (mensaje1 == mensaje4 && booleano1 == booleano4) {
+        echo mensaje2 + "" + caracter1 + " :3";
+        echo "Declaracion correcta";
+        notaDeclaraciones = notaDeclaraciones + 0.25;
+    } else {
+        echo "No " + mensaje2 + caracter4 + " :(";
+        echo "Declaracion incorrecta";
+    }
+
+    echo "Nota Declaraciones: " + notaDeclaraciones;
+
+    notaArchivo1 = notaArchivo1 + notaDeclaraciones;
+}
+
+function void Asignacion(){
+    echo "--------------------------------------------------------";
+    echo "-----------------ASIGNACION DE VARIABLES-----------------";
+    echo "--------------------------------------------------------";
+    let notaAsignacion: double = 0.0;
+
+    //declaramos variables vacias
+    let a, b, c: int;
+    let d, e, f: double;
+    let g, h, i: char;
+    let j, k, l: bool;
+    let m, n, o: string;
+
+    a = 10;
+    b = 20;
+    c = 30;
+
+    a = b + c; // a ahora vale 50
+    b = a - c; // b ahora vale 20
+    c = a + b; // c ahora vale 70
+
+    d = 10.5;
+    e = 20.5;
+    f = 30.5;
+
+    d = e + f; // d ahora vale 51
+    e = d - f; // e ahora vale 20.5
+    f = d + e; // f ahora vale 71.5
+
+    g = 'a';
+    h = 'b';
+    i = 'c';
+
+    g = h; // g ahora vale 'b'
+    h = i; // h ahora vale 'c'
+    i = 'f'; // i ahora vale 'f'
+
+    j = true;
+    k = false;
+    l = true;
+
+    j = k; // j ahora vale false
+    k = l; // k ahora vale true
+    l = false; // l ahora vale false
+
+    m = "Compiladores";
+    n = "Segundo";
+    o = "Semestre";
+
+    m = n + " " + o; // m ahora vale "Segundo Semestre"
+    n = "Compiladores 1"; // n ahora vale "Compiladores 1"
+    o = "2024"; // o ahora vale "2024"
+
+    // validacion enteros
+    if (a == 50 && b == 20 && c == 70) {
+        echo "Asignacion de enteros correcta";
+        notaAsignacion = notaAsignacion + 0.2;
+    } else {
+        echo "Asignacion de enteros incorrecta";
+    }
+
+    // validacion decimales
+    if (d == 51 && e == 20.5 && f == 71.5) {
+        echo "Asignacion de decimales correcta";
+        notaAsignacion = notaAsignacion + 0.2;
+    } else {
+        echo "Asignacion de decimales incorrecta";
+    }
+
+    // validacion caracteres
+    if (g == 'b' && h == 'c' && i == 'f') {
+        echo "Asignacion de caracteres correcta";
+        notaAsignacion = notaAsignacion + 0.2;
+    } else {
+        echo "Asignacion de caracteres incorrecta";
+    }
+
+    // validacion booleanos
+    if (j == false && k == true && l == false) {
+        echo "Asignacion de booleanos correcta";
+        notaAsignacion = notaAsignacion + 0.2;
+    } else {
+        echo "Asignacion de booleanos incorrecta";
+    }
+
+    // validacion strings
+    if (m == "Segundo Semestre" && n == "Compiladores 1" && o == "2024") {
+        echo "Asignacion de strings correcta";
+        notaAsignacion = notaAsignacion + 0.2;
+    } else {
+        echo "Asignacion de strings incorrecta";
+    }
+
+    echo "Nota Asignacion: " + notaAsignacion;
+
+    notaArchivo1 = notaArchivo1 + notaAsignacion;
+
+}
+
+function void Constantes(){
+    echo "--------------------------------------------------------";
+    echo "---------------------- CONSTANTES ----------------------";
+    echo "--------------------------------------------------------";
+    let notaConstantes: double = 0.0;
+
+    const decimal1: double;
+    const mensaje3: string = "Voy a ganar compi";
+    const entero1: int = 10;
+    const booleano1: bool = true;
+    const caracter1: char = '1';
+
+    // vamos a validar las constantes
+    //decimal1 = 10.5;
+    //mensaje3 = "No voy a ganar compi1";
+    //entero1 = 20;
+    //booleano1 = false;
+    //caracter1 = '2';
+
+    //entero
+    if (entero1 == 20) {
+        echo "No se validaron bien las constantes :'(";
+    } else {
+        echo "Validacion de constantes correcta";
+        notaConstantes = notaConstantes + 0.2;
+    }
+
+    //decimal
+    if (decimal1 == 10.5) {
+        echo "No se validaron bien las constantes :'(";
+    } else {
+        echo "Validacion de constantes correcta";
+        notaConstantes = notaConstantes + 0.2;
+    }
+
+    // string
+    if (mensaje3 == "No voy a ganar compi1") {
+        echo "No se validaron bien las constantes :'(";
+    } else {
+        echo "Validacion de constantes correcta";
+        notaConstantes = notaConstantes + 0.2;
+    }
+
+    // boolean
+    if (!booleano1) {
+        echo "No se validaron bien las constantes :'(";
+    } else {
+        echo "Validacion de constantes correcta";
+        notaConstantes = notaConstantes + 0.2;
+    }
+
+    // char
+    if (caracter1 == '2') {
+        echo "No se validaron bien las constantes :'(";
+    } else {
+        echo "Validacion de constantes correcta";
+        notaConstantes = notaConstantes + 0.2;
+    }
+
+    echo "Nota Constantes: " + notaConstantes;
+
+    notaArchivo1 = notaArchivo1 + notaConstantes;
+}
+
+function void Aritmeticas() {
+    echo "--------------------------------------------------------";
+    echo "-----------------OPERACIONES ARITMETICAS-----------------";
+    echo "--------------------------------------------------------";
+
+    let punteoAritmeticas: double = 0.0;
+
+    // aritmeticas basicas
+
+    let sumaCadenas: string = "Si sale " + 'C' + "O" + 'M' + "P" + 'I' + "1"; // Si sale COMPI1
+
+    let sumas: double = 0.0 + true + false + 1 + 'F'; // el ascci de F es 70 -> 72.0
+
+    let restas: double = (100 - true - '2') + true - 25.5; // el ascci de 2 es 50 -> 24.5
+
+    let multiplicaciones: double = '+' * 2 * 0.5 * 1 * 1 * 1; // el ascci de + es 43 -> 43.0
+
+    let divisiones: double = (10 / 2) / (('R' / 1) / (90.2 / 2.2)); // el ascci de R es 82 -> 2.5
+
+    let potencias: double = (2 ^ 3) ^ 2.0; // 64.0
+
+    let raiz: double = (64 $ 3) $ 2; //2.0
+
+    let modulo: double = (100 % 24) % 3.0; // 1.0
+
+    let negativos: double = -10.0 + -20 + -30 + -40; // -100.0
+
+    // artimetica con complejas
+    let a: double = 20 - 10 + 8 / 2 * 3 + 10 - 10 - 10 + 50; //62
+    let c: double = 100 / 20 * 9 - 78 + 6 - 7 + 8 - 7 + 7 * 1 * 2 * 3 / 3; //-19
+
+    let val1: double = 2.0;
+    let val2: double= -10.0;
+
+    let val3:double = val2 * val1 + 10 - 10 * 100 / 100; //-20
+
+    val1 = val3 / val1 + 50 ^ 2 / 50 * 2 + 100 / 100 - 0; //41
+
+    punteoAritmeticas = if (sumaCadenas == "Si sale COMPI1") punteoAritmeticas + 0.1 : punteoAritmeticas;
+    punteoAritmeticas = if (sumas == 72.0) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    punteoAritmeticas = if (restas == 24.5) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    punteoAritmeticas = if (multiplicaciones == 43.0) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    punteoAritmeticas = if (divisiones == 2.5) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    punteoAritmeticas = if (potencias == 64.0) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    // EN LA RAIZ EL VALOR NO APROXIMA A 2, SE QUE DA EN 1.99999
+    punteoAritmeticas = if (raiz == 2.0) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    echo raiz;
+    punteoAritmeticas = if (modulo == 1.0) punteoAritmeticas + 0.1 : punteoAritmeticas;
+    punteoAritmeticas = if (negativos == -100.0) punteoAritmeticas + 0.1 : punteoAritmeticas;
+
+    punteoAritmeticas = if (a == 62) punteoAritmeticas + 0.4 : punteoAritmeticas;
+    punteoAritmeticas = if (c == -19) punteoAritmeticas + 0.4 : punteoAritmeticas;
+    punteoAritmeticas = if (val3 == -20) punteoAritmeticas + 0.4 : punteoAritmeticas;
+    punteoAritmeticas = if (val1 == 91) punteoAritmeticas + 0.4 : punteoAritmeticas;
+
+    echo "Nota Aritmeticas: " + punteoAritmeticas;
+
+    notaArchivo1 = notaArchivo1 + punteoAritmeticas;
+}
+
+function void Logicas(){
+    echo "--------------------------------------------------------";
+    echo "-----------------OPERACIONES LOGICAS-----------------";
+    echo "--------------------------------------------------------";
+
+    let punteoLogicas: double = 0.0;
+    const n0:int = 16;
+
+    const condicion1: bool = !!!!!!!!!!!!!!!!!!true; // true
+    const condicion2: bool = ((true && true) || ((false && false) && (false == true))) || (!true); // true
+    const condicion3: bool = !(!(n0 == 16 && false == true) && !(true)); //true
+
+    let n1: double = n0 / 16;
+    n1 = n1 + true;
+    let c1: bool = n1 != 2;
+    let aritmetica1: double = n0 / 16 + (!(true || false));
+    let c2: bool = aritmetica1 == n1;
+    let c3:bool = !true;
+
+    const condicion4: bool = !(!(!(c1 || c2) || c3)); // true
+
+    const condicion5: bool = !(!(n0 == 16 && false == true) && !(true)); // true
+
+    punteoLogicas = if (condicion1) punteoLogicas + 0.5 : punteoLogicas;
+    punteoLogicas = if (condicion2) punteoLogicas + 0.5 : punteoLogicas;
+    punteoLogicas = if (condicion3) punteoLogicas + 0.5 : punteoLogicas;
+    punteoLogicas = if (condicion4) punteoLogicas + 0.5 : punteoLogicas;
+    punteoLogicas = if (condicion5) punteoLogicas + 0.5 : punteoLogicas;
+
+    echo "Nota Logicas: " + punteoLogicas;
+
+    notaArchivo1 = notaArchivo1 + punteoLogicas;
+}
+
+function void Relacionales(){
+    let n0: int= 34;
+    let n1: int = 16;
+
+    echo "--------------------------------------------------------";
+    echo "-----------------OPERACIONES RELACIONALES-----------------";
+    echo "--------------------------------------------------------";
+
+    Relacionales1(salida = n0);
+    Relacionales2();
+
+    echo "Nota Relacionales 1: " + notaRelacionales1;
+    echo "Nota Relacionales 2: " + notaRelacionales2;
+    echo "Total Relacionales: " + (notaRelacionales1 + notaRelacionales2);
+    notaArchivo1 = notaArchivo1 + notaRelacionales1 + notaRelacionales2;
+
+}
+
+let notaRelacionales1: double = 0.0;
+
+function void Relacionales1(salida: int){
+    let n0: double = salida + 0.0;
+
+    if (n0 < 34.34) {
+        n0 = n0 + 15;
+        if (n0 > 44) {
+            n0++;
+        }
+    } else {
+        n0 = 1;
+    }
+
+    if (n0 != 1) {
+        if (n0 == 50) {
+            notaRelacionales1 = notaRelacionales1 + 1;
+        } else {
+            notaRelacionales1 = notaRelacionales1 + 0.0;
+        }
+    } else {
+        notaRelacionales1 = notaRelacionales1 + 0.0;
+    }
+}
+
+let notaRelacionales2: double = 0.0;
+
+function void Relacionales2(n0: int = 16){
+    if (10 - 15 >= 0 && 44.44 == 44.44) {
+        notaRelacionales2 = notaRelacionales2 + 0.0;
+    } else {
+        if (15 + 8 == 22 - 10 + 5 * 3 - 4 && 0 >= -1) {
+            if (10.0 != 10.1 - 0.2) {
+                notaRelacionales2 = notaRelacionales2 + 1.5;
+            } else {
+                notaRelacionales2 = notaRelacionales2 + 0.0;
+            }
+        } else {
+            if (12 == 12) {
+                notaRelacionales2 = notaRelacionales2 + 0.0;
+            } else {
+                notaRelacionales2 = notaRelacionales2 + 0.0;
+            }
+        }
+    }
+}
+
+//Salida Esperada
+/*
+--------------------------------------------------------
+-----------------CALIFICACION ARCHIVO 1-----------------
+--------------------------------------------------------
+Prioridad de variable local correcta
+nota Ambitos 1
+--------------------------------------------------------
+-----------------DECLARACION DE VARIABLES-----------------
+--------------------------------------------------------
+Se inicializaron las variables double correctamente
+Voy a ganar compi1 :3
+Declaracion correcta
+Nota Declaraciones: 0.5
+--------------------------------------------------------
+-----------------ASIGNACION DE VARIABLES-----------------
+--------------------------------------------------------
+Asignacion de enteros correcta
+Asignacion de decimales correcta
+Asignacion de caracteres correcta
+Asignacion de booleanos correcta
+Asignacion de strings correcta
+Nota Asignacion: 1.0
+--------------------------------------------------------
+---------------------- CONSTANTES ----------------------
+--------------------------------------------------------
+Validacion de constantes correcta
+Validacion de constantes correcta
+Validacion de constantes correcta
+Validacion de constantes correcta
+Validacion de constantes correcta
+Nota Constantes: 1.0
+--------------------------------------------------------
+-----------------OPERACIONES ARITMETICAS-----------------
+--------------------------------------------------------
+Nota Aritmeticas: 2.5
+--------------------------------------------------------
+-----------------OPERACIONES LOGICAS-----------------
+--------------------------------------------------------
+Nota Logicas: 2.5
+--------------------------------------------------------
+-----------------OPERACIONES RELACIONALES-----------------
+--------------------------------------------------------
+Nota Relacionales 1: 1
+Nota Relacionales 2: 1.5
+Total Relacionales: 2.5
+--------------------------------------------------------
+Funcion ejecutar: +1
+Funcion echo: +1
+llamada sin parametros: +1
+llamada con parametros: +1
+--------------------------------------------------------
+Nota Final Archivo 1: 15.0
+--------------------------------------------------------
+*/ 

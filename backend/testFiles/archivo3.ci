@@ -1,0 +1,575 @@
+let vectorEntero: int[] = new vector int [20];
+vectorEntero[0] = 100;
+vectorEntero[1 + 0] = 50;
+vectorEntero[2] = 1;
+vectorEntero[3] = 150;
+vectorEntero[10 - 6] = 70;
+vectorEntero[5] = 25;
+vectorEntero[6] = 33;
+vectorEntero[CAST(70 / 10 AS int)] = 0;
+vectorEntero[8] = 81;
+vectorEntero[9] = 11;
+vectorEntero[100 - 90] = 5;
+vectorEntero[11] = 9;
+vectorEntero[12] = 7;
+vectorEntero[13] = if (true) 77: -100; // debe ser 77
+vectorEntero[14] = 57;
+vectorEntero[15] = 44;
+vectorEntero[16] = 23;
+vectorEntero[17] = 10;
+vectorEntero[18] = 167;
+vectorEntero[19] = 2024;
+
+
+let entradas: int[][] = [
+    [0, 0, 1],
+    [1, 1, 0],
+    [1, 0, 1],
+    [0, 1, 0]
+];
+
+EJECUTAR main();
+
+let salidas: int[] = [0, 1, 1, 0]; // Etiquetas de salida
+let inputSize: int = 3; // tamaño de las entradas
+let numEpochs: int = 1000; // numero de iteraciones
+let learningRate: double = 0.01; // tasa de aprendizaje
+let waights: double[] = new vector double[inputSize]; // pesos
+
+
+function int FuncionActivacion(sum: double){
+    return if (sum >= 0) 1: 0;
+}
+
+function void llenarPesos(){
+    for (let i: int = 0; i < inputSize; i++) {
+        waights[i] = 0.0;
+    }
+}
+
+// Función para entrenar el perceptrón
+function void Entrenamiento() {
+    llenarPesos();
+    for (let epoch: int = 0; epoch < numEpochs; epoch++) {
+        for (let i: int = 0; i < 4; i++) {
+            //calcular salida ponderada
+            let weightedSum: double = 0.0;
+            for (let j: int = 0; j < inputSize; j++) {
+                weightedSum = weightedSum + (entradas[i][j] * waights[j]);
+            }
+
+            //calcular error
+            let predicted: int = FuncionActivacion(sum = weightedSum);
+            let error: int = salidas[i] - predicted;
+
+            // actualizar pesos
+            for (let j: int = 0; j < inputSize; j++) {
+                waights[j] = waights[j] + (learningRate * error * entradas[i][j]);
+            }
+
+        }
+    }
+}
+
+// funcion de prediccion con el percetron entrenado
+function int predecir(){
+    let input: int[] = [1, 0, 0];
+    let weightedSum: double = 0.0;
+    for (let i: int = 0; i < inputSize; i++) {
+        weightedSum = weightedSum + (input[i] * waights[i]);
+    }
+    return FuncionActivacion(sum = weightedSum);
+}
+
+function void EjecucionPerceptron(){
+    Entrenamiento();
+    let prediccion: int = predecir();
+    echo "Prediccion para [1, 0, 0]: " + prediccion;
+}
+
+function void vectorDoble(){
+    echo "--------------------------------------------------------";
+    echo "----------------- VECTOR 2 DIMENSION -------------------";
+    EjecucionPerceptron();
+}
+
+function void insertionSort() {
+    let n: int = len(vectorEntero);
+    for (let i: int = 1; i < n; i++) {
+        let key: int = vectorEntero[i];
+        let j: int = i - 1;
+        while (j >= 0 && vectorEntero[j] > key) {
+            vectorEntero[j + 1] = vectorEntero[j];
+            j = j - 1;
+        }
+        vectorEntero[j + 1] = key;
+    }
+}
+
+function void imprimirVector() {
+    let cadena: string = "[";
+    for (let i: int = 0; i < len(vectorEntero); i++) {
+        cadena = cadena + vectorEntero[i] + " ";
+    }
+    cadena = cadena + "]\n";
+    echo cadena;
+}
+
+function void vectorSimple(){
+    echo "--------------------------------------------------------";
+    echo "----------------- VECTOR 1 DIMENSION -------------------";
+    echo "Vector original: ";
+    imprimirVector();
+    insertionSort();
+    echo "Vector ordenado: ";
+    imprimirVector();
+}
+
+function void Casteos(){
+    echo "--------------------------------------------------------";
+    echo "----------------------- CASTEOS ------------------------";
+    let int_to_double: double = CAST(2024 AS double);
+    let double_to_int: int = CAST((61 + (1 / 3)) AS int);
+    let int_to_string: string = CAST(2024 AS string);
+    let int_to_char: char = CAST(70 AS char); // F
+    let double_to_string: string = CAST(61.1 AS string);
+    let char_to_int: int = CAST('R' AS int); // 82
+    let char_to_double: double = CAST('J' AS double); // 74.0
+
+    echo "int_to_double: " + int_to_double;
+    echo "double_to_int: " + double_to_int;
+    echo "int_to_string: " + int_to_string;
+    echo "int_to_char: " + int_to_char;
+    echo "double_to_string: " + double_to_string;
+    echo "char_to_int: " + char_to_int;
+    echo "char_to_double: " + char_to_double;
+
+    //validaciones
+    /*echo int_to_double is double;
+    echo double_to_int is int;
+    echo int_to_string is string;
+    echo int_to_char is char;
+    echo double_to_string is string;
+    echo char_to_int is int;
+    echo char_to_double is double;
+    */
+}
+
+function void NativasSimples(){
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA LOWER ---------------------";
+    echo lower("SI SALE COMPILADORES 1");
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA UPPER ---------------------";
+    echo upper("si sale compiladores 1");
+    
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA ROUND ---------------------";
+    const a: double = 60.0 + (23 / 45); // 60.511111
+    const b: double = 59.4 + (4 / 45); // 59.488888
+    echo "El numero: " + a + " redondeado es: " + round(a);
+    echo "El numero: " + b + " redondeado es: " + round(b);
+
+    // length
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA LENGTH --------------------";
+    let cadena: string = "Hola mundo";
+    echo "La longitud de la cadena: " + cadena + " es: " + len(cadena);
+    echo "La longitud del vectorEntero es: " + len(vectorEntero);
+    echo "La longitud de vector entradas es: " + len(entradas);
+
+    //truncate
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA TRUNCATE ------------------";
+
+    echo "El numero: " + a + " truncado es: " + truncate(a);
+    echo "El numero: " + b + " truncado es: " + truncate(b);
+
+    // funcion is
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA IS ------------------------";
+    echo "Es cadena: " + ("Hola" is string);
+    echo "Es entero: " + (2024 is int);
+    echo "Es double: " + (2024.0 is double);
+    echo "Es char: " + ('A' is char);
+    echo "Es boolean: " + (true is bool);
+
+    //tostring
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA TOSTRING ------------------";
+    echo "El numero: " + 100 + " convertido a cadena es: " + toString(100);
+    echo "El numero: " + 99.9 + " convertido a cadena es: " + toString(99.9);
+    echo "El boolean: " + true + " convertido a cadena es: " + toString(true);
+    echo "El boolean: " + false + " convertido a cadena es: " + toString(false);
+
+    //toCharArray
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA TOCHARARRAY ------------------";
+    let nombreAuxiliar: char[] = toCharArray("Fabian Reyna");
+    let VectorAuxiliar: string = "[";
+    for (let i: int = 0; i < len(nombreAuxiliar); i++) {
+        VectorAuxiliar = VectorAuxiliar + nombreAuxiliar[i] + "\n";
+    }
+    VectorAuxiliar = VectorAuxiliar + "]";
+    echo VectorAuxiliar;
+}
+
+function void NativasVectores(){
+    let vecInt: int[] = [10, 30, 15, 5, 2];
+    let vecDouble: double[] = [10.0, 30.0, 15.0, 5.0, 2.0];
+    let vecChar: char[] = ['F', 'R', 'C', 'A', 'M'];
+    let vecString: string[] = ["Fabian", "Reyna", "Carlos", "Acabal", "Xhunik", "Miguel"];
+    let vecBool: boolean[] = [true, false, true, false, true];
+
+    // funcion reverse
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA REVERSE -------------------";
+    // original entero
+    let cadenaSalida: string = "[";
+    for (let i: int = 0; i < len(vecInt); i++) {
+        cadenaSalida = cadenaSalida + vecInt[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector original Int: " + cadenaSalida;
+    // invertido entero
+    cadenaSalida = "[";
+    reverse(vecInt);
+    for (let i: int = 0; i < len(vecInt); i++) {
+        cadenaSalida = cadenaSalida + vecInt[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector invertido Int: " + cadenaSalida;
+    // original double
+    cadenaSalida = "[";
+    for (let i: int = 0; i < len(vecDouble); i++) {
+        cadenaSalida = cadenaSalida + vecDouble[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector original Double: " + cadenaSalida;
+    // invertido double
+    cadenaSalida = "[";
+    reverse(vecDouble);
+    for (let i: int = 0; i < len(vecDouble); i++) {
+        cadenaSalida = cadenaSalida + vecDouble[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector invertido Double: " + cadenaSalida;
+    // original char
+    cadenaSalida = "[";
+    for (let i: int = 0; i < len(vecChar); i++) {
+        cadenaSalida = cadenaSalida + vecChar[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector original Char: " + cadenaSalida;
+    // invertido char
+    cadenaSalida = "[";
+    reverse(vecChar);
+    for (let i: int = 0; i < len(vecChar); i++) {
+        cadenaSalida = cadenaSalida + vecChar[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector invertido Char: " + cadenaSalida;
+    // original string
+    cadenaSalida = "[";
+    for (let i: int = 0; i < len(vecString); i++) {
+        cadenaSalida = cadenaSalida + vecString[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector original String: " + cadenaSalida;
+    // invertido string
+    cadenaSalida = "[";
+    reverse(vecString);
+    for (let i: int = 0; i < len(vecString); i++) {
+        cadenaSalida = cadenaSalida + vecString[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector invertido String: " + cadenaSalida;
+    // original boolean
+    cadenaSalida = "[";
+    for (let i: int = 0; i < len(vecBool); i++) {
+        cadenaSalida = cadenaSalida + vecBool[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector original Boolean: " + cadenaSalida;
+    // invertido boolean
+    cadenaSalida = "[";
+    reverse(vecBool);
+    for (let i: int = 0; i < len(vecBool); i++) {
+        cadenaSalida = cadenaSalida + vecBool[i] + " ";
+    }
+    cadenaSalida = cadenaSalida + "]";
+    echo "Vector invertido Boolean: " + cadenaSalida;
+
+    // max
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA MAX -----------------------";
+    echo "Maximo de vecInt: " + max(vecInt);
+    echo "Maximo de vecDouble: " + max(vecDouble);
+    echo "Maximo de vecChar: " + max(vecChar);
+    echo "Maximo de vecString: " + max(vecString);
+    echo "Maximo de vecBool: " + max(vecBool);
+
+    // min
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA MIN -----------------------";
+    echo "Minimo de vecInt: " + min(vecInt);
+    echo "Minimo de vecDouble: " + min(vecDouble);
+    echo "Minimo de vecChar: " + min(vecChar);
+    echo "Minimo de vecString: " + min(vecString);
+    echo "Minimo de vecBool: " + min(vecBool);
+
+    // sum
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA SUM -----------------------";
+    echo "Suma de vecInt: " + sum(vecInt);
+    echo "Suma de vecDouble: " + sum(vecDouble);
+    echo "Suma de vecChar: " + sum(vecChar);
+    echo "Suma de vecString: " + sum(vecString);
+    echo "Suma de vecBool: " + sum(vecBool);
+
+    // average
+    echo "--------------------------------------------------------";
+    echo "--------------------- NATIVA AVERAGE -------------------";
+    echo "Promedio de vecInt: " + average(vecInt);
+    echo "Promedio de vecDouble: " + average(vecDouble);
+    echo "Promedio de vecChar: " + average(vecChar);
+    echo "Promedio de vecBool: " + average(vecBool);
+
+}
+
+
+function void main(){
+    echo "--------------------------------------------------------";
+    echo "-----------------CALIFICACION ARCHIVO 2-----------------";
+    echo "--------------------------------------------------------\n";
+    vectorSimple();
+    vectorDoble();
+    Casteos();
+    NativasSimples();
+    NativasVectores();
+}
+
+
+function void Recursivas(){
+    let valor_fibonacci: int = 20;
+    let valor_par_impar: int = 70;
+    echo "--------------------------------------------------------";
+    echo "--------------------- RECURSIVAS -----------------------\n";
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- FIBONACCI ------------------------";
+    echo "Fibonacci de " + valor_fibonacci + ": " + fibonacci(n = valor_fibonacci) + "\n";
+
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- PAR O IMPAR ----------------------";
+    if (par(nump=valor_par_impar) == 1) {
+        echo "El numero " + valor_par_impar + " es par \n";
+    } else {
+        echo "El numero " + valor_par_impar + " es impar \n";
+    }
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- CONTAR CAMINOS -------------------";
+    let m: int = 3;
+    let n: int = 3;
+    echo "La cantidad de caminos en una cuadricula de " + m + "x" + n + " es: " + contarCaminos(m = m, n = n);
+    echo "\n";
+
+    echo "--------------------------------------------------------";
+    echo "--------------------- ACKERMAN -------------------------";
+    m = 3;
+    n = 4;
+    echo "Funcion de Ackerman (" + m + ", " + n + "): " + ackerman(m = m, n = n) + "\n";
+    //echo "Funcion de Ackerman con puntos (" + m + ", " + n + "): " + ackerman_puntos_menos(m = m, n = n) + "\n";
+}
+
+function int fibonacci(n: int){
+    if (n > 1) {
+        return fibonacci(n = n - 1) + fibonacci(n = n - 2);
+    } else if (n == 1) {
+        return 1;
+    } else if (n == 0) {
+        return 0;
+    } else {
+        echo "Error: n debe ser mayor o igual a 0";
+        return 0;
+    }
+}
+
+function int par(nump: int){
+    if (nump == 0) {
+        return 1;
+    } else {
+        return impar(numi=nump - 1);
+    }
+}
+
+function int impar(numi: int){
+    if (numi == 0) {
+        return 0;
+    } else {
+        return par(nump=numi - 1);
+    }
+}
+
+function int contarCaminos(m: int, n: int){
+    if (m == 1 || n == 1) {
+        echo "Contar Caminos (" + m + ", " + n + ") = 1";
+        return 1;
+    } else {
+        let resultado: int = contarCaminos(m = m - 1, n = n) + contarCaminos(m = m, n = n - 1);
+        echo "Contar Caminos (" + m + ", " + n + ") = Contar Caminos(" + (m - 1) + ", " + n +
+            ") + Contar Caminos(" + m + ", " + (n - 1) + ") = " + resultado;
+        return resultado;
+    }
+}
+
+function int ackerman(m: int, n: int){
+    return if (n == 0) (n + 1) : (if (m > 0 && n == 0) (ackerman(m = m - 1, n = 1)) : (ackerman(m = m - 1, n = ackerman(m = m, n = n - 1))));
+}
+
+function int ackerman_puntos_menos(m: int, n: int){
+    if (m == 0) {
+        return n + 1;
+    } else if (m > 0 && n == 0) {
+        return ackerman_puntos_menos(m = m - 1, n = 1);
+    } else {
+        return ackerman_puntos_menos(m = m - 1, n = ackerman_puntos_menos(m = m, n = n - 1));
+    }
+}
+
+// salida esperada 
+/*
+--------------------------------------------------------
+-----------------CALIFICACION ARCHIVO 2-----------------
+--------------------------------------------------------
+
+--------------------------------------------------------
+----------------- VECTOR 1 DIMENSION -------------------
+Vector original: 
+[100 50 1 150 70 25 33 0 81 11 5 9 7 77 57 44 23 10 167 2024 ]
+
+Vector ordenado: 
+[0 1 5 7 9 10 11 23 25 33 44 50 57 70 77 81 100 150 167 2024 ]
+
+--------------------------------------------------------
+----------------- VECTOR 2 DIMENSION -------------------
+Prediccion para [1, 0, 0]: 1
+--------------------------------------------------------
+----------------------- CASTEOS ------------------------
+int_to_double: 2024.0
+double_to_int: 61
+int_to_string: 2024
+int_to_char: F
+double_to_string: 61.1
+char_to_int: 82
+char_to_double: 74.0
+--------------------------------------------------------
+--------------------- NATIVA LOWER ---------------------
+si sale compiladores 1
+--------------------------------------------------------
+--------------------- NATIVA UPPER ---------------------
+SI SALE COMPILADORES 1
+--------------------------------------------------------
+--------------------- NATIVA ROUND ---------------------
+El numero: 60.511111 redondeado es: 61
+El numero: 59.488888 redondeado es: 59
+--------------------------------------------------------
+--------------------- NATIVA LENGTH ---------------------
+La longitud de la cadena: Hola mundo es: 10
+La longitud del vectorEntero es: 20
+La longitud de vector entradas es: 4
+--------------------------------------------------------
+--------------------- NATIVA TRUNCATE ------------------
+El numero: 60.511111 truncado es: 60
+El numero: 59.488888 truncado es: 59
+--------------------------------------------------------
+--------------------- NATIVA IS ------------------------
+Es cadena: true
+Es entero: true
+Es double: true
+Es char: true
+Es boolean: true
+--------------------------------------------------------
+--------------------- NATIVA TOSTRING ------------------
+El numero: 100 convertido a cadena es: 100
+El numero: 99.9 convertido a cadena es: 99.9
+El boolean: true convertido a cadena es: true
+El boolean: false convertido a cadena es: false
+--------------------------------------------------------
+--------------------- NATIVA TOCHARARRAY ------------------
+[F A B I A N  R E Y N A ]
+--------------------------------------------------------
+--------------------- NATIVA REVERSE -------------------
+Vector original Int: [10 30 15 5 2 ]
+Vector invertido Int: [2 5 15 30 10 ]
+Vector original Double: [10.0 30.0 15.0 5.0 2.0 ]
+Vector invertido Double: [2.0 5.0 15.0 30.0 10.0 ]
+Vector original Char: [F R C A M ]
+Vector invertido Char: [M A C R F ]
+Vector original String: [Fabian Reyna Carlos Acabal Xhunik Miguel ]
+Vector invertido String: [Miguel Xhunik Acabal Carlos Reyna Fabian ]
+Vector original Boolean: [true false true false true ]
+Vector invertido Boolean: [true false true false true ]
+--------------------------------------------------------
+--------------------- NATIVA MAX -----------------------
+Maximo de vecInt: 30
+Maximo de vecDouble: 30.0
+Maximo de vecChar: R
+Maximo de vecString: Xhunik
+Maximo de vecBool: true
+--------------------------------------------------------
+--------------------- NATIVA MIN -----------------------
+Minimo de vecInt: 2
+Minimo de vecDouble: 2.0
+Minimo de vecChar: A
+Minimo de vecString: Acabal
+Minimo de vecBool: false
+--------------------------------------------------------
+--------------------- NATIVA SUM -----------------------
+Suma de vecInt: 62
+Suma de vecDouble: 62.0
+Suma de vecChar: 366
+Suma de vecString: FabianReynaCarlosAcabalXhunikMiguel
+Suma de vecBool: 3
+--------------------------------------------------------
+--------------------- NATIVA AVERAGE -------------------
+Promedio de vecInt: 12.4
+Promedio de vecDouble: 12.4
+Promedio de vecChar: 73.2
+Promedio de vecBool: 0.6
+--------------------------------------------------------
+--------------------- RECURSIVAS -----------------------
+
+--------------------------------------------------------
+--------------------- FIBONACCI ------------------------
+Fibonacci de 20: 6765
+
+--------------------------------------------------------
+--------------------- PAR O IMPAR ----------------------
+El numero 70 es par
+
+--------------------------------------------------------
+--------------------- CONTAR CAMINOS -------------------
+Contar Caminos (1, 3) = 1
+Contar Caminos (1, 2) = 1
+Contar Caminos (2, 1) = 1
+Contar Caminos (2, 2) = Contar Caminos(1, 2) + Contar Caminos(2, 1) = 2
+Contar Caminos (2, 3) = Contar Caminos(1, 3) + Contar Caminos(2, 2) = 3
+Contar Caminos (1, 2) = 1
+Contar Caminos (2, 1) = 1
+Contar Caminos (2, 2) = Contar Caminos(1, 2) + Contar Caminos(2, 1) = 2
+Contar Caminos (3, 1) = 1
+Contar Caminos (3, 2) = Contar Caminos(2, 2) + Contar Caminos(3, 1) = 3
+Contar Caminos (3, 3) = Contar Caminos(2, 3) + Contar Caminos(3, 2) = 6
+La cantidad de caminos en una cuadricula de 3x3 es: 6
+
+La cantidad de caminos en una cuadricula de 3x3 es: 6
+
+
+--------------------------------------------------------
+--------------------- ACKERMAN -------------------------
+Funcion de Ackerman (3, 4): 125
+*/

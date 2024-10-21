@@ -1,5 +1,5 @@
 import { Primitive, VariableTypes } from "../herramientas/tipos";
-import { Statement } from "../abstract/ast";
+import { Node, Statement } from "../abstract/ast";
 import { PrimitiveVal } from "./primitives";
 import ReturnType from "../herramientas/returnType";
 
@@ -29,4 +29,24 @@ export class Vector {
             this.values = values;
         }
     }
+
+    getAST(): Node {
+        let node: Node = new Node("VECTOR CONTENT []");
+
+        if (this.values && (this.values.length > 0) && this.values[0] instanceof Vector){
+            for (let vector of this.values){
+                let contentVector: Node = new Node("VECTOR CONTENT []");
+                for (let item of (vector as Vector).values){
+                    contentVector.addChildsNode((item as Statement).getAST());
+                }
+                node.addChildsNode(contentVector);
+            }
+        } else {
+            for (let item of this.values){
+                node.addChildsNode(item.getAST());
+            }
+        }
+        return node;
+    }
+
 }

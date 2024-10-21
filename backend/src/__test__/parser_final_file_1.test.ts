@@ -59,13 +59,13 @@ function executeCode(tree: Tree, globalEnv: Environment) {
 }
 
 
-describe('Test Interpreter On Medium 2', () => {
+describe('Test Interpreter On FINAL 1', () => {
     let globalEnv: Environment;
     let tree: Tree;
 
     beforeAll(() => {
         // Reading test file
-        const testPath = path.join(__dirname, '..', '..', 'testFiles', 'medio_2.test.ci');
+        const testPath = path.join(__dirname, '..', '..', 'testFiles', 'archivo1.ci');
         const data = readFileSync(testPath, 'utf8');
 
         // Lexical analysis
@@ -92,110 +92,73 @@ describe('Test Interpreter On Medium 2', () => {
         executeCode(tree, globalEnv);
     });
 
+
     test('The "echo" outputs should match expected values', () => {
         const expectedOutput = [
-            "Archivo de prueba 1",
-            "Si sale compi1 ",
-            "Manejo de entornos correcto :D",
-            "Tabla de multiplicar de 7",
-            "7 x 1 = 7",
-            "7 x 2 = 14",
-            "7 x 3 = 21",
-            "7 x 4 = 28",
-            "7 x 5 = 35",
-            "7 x 6 = 42",
-            "7 x 7 = 49",
-            "7 x 8 = 56",
-            "7 x 9 = 63",
-            "7 x 10 = 70",
-            "este es a:",
-            "48",
-            "---------",
-            "este es b:",
-            "18",
-            "---------",
-            "este es a:",
-            "18",
-            "---------",
-            "este es b:",
-            "12",
-            "---------",
-            "este es a:",
-            "12",
-            "---------",
-            "este es b:",
-            "6",
-            "---------",
-            "este es a:",
-            "6",
-            "---------",
-            "este es b:",
-            "0",
-            "---------",
-            "Recursividad basica correcta",
-            "La suma de los elementos de arreglo2 es: 17",
-            "La cantidad de ceros en el arreglo es: 8"
+            "--------------------------------------------------------",
+            "-----------------CALIFICACION ARCHIVO 1-----------------",
+            "--------------------------------------------------------",
+            "Prioridad de variable local correcta",
+            "nota Ambitos 1",
+            "--------------------------------------------------------",
+            "-----------------DECLARACION DE VARIABLES-----------------",
+            "--------------------------------------------------------",
+            "Se inicializaron las variables double correctamente",
+            "Voy a ganar compi1 :3",
+            "Declaracion correcta",
+            "Nota Declaraciones: 0.5",
+            "--------------------------------------------------------",
+            "-----------------ASIGNACION DE VARIABLES-----------------",
+            "--------------------------------------------------------",
+            "Asignacion de enteros correcta",
+            "Asignacion de decimales correcta",
+            "Asignacion de caracteres correcta",
+            "Asignacion de booleanos correcta",
+            "Asignacion de strings correcta",
+            "Nota Asignacion: 1",
+            "--------------------------------------------------------",
+            "---------------------- CONSTANTES ----------------------",
+            "--------------------------------------------------------",
+            "Validacion de constantes correcta",
+            "Validacion de constantes correcta",
+            "Validacion de constantes correcta",
+            "Validacion de constantes correcta",
+            "Validacion de constantes correcta",
+            "Nota Constantes: 1",
+            "--------------------------------------------------------",
+            "-----------------OPERACIONES ARITMETICAS-----------------",
+            "--------------------------------------------------------",
+            "Nota Aritmeticas: 2.4",
+            "--------------------------------------------------------",
+            "-----------------OPERACIONES LOGICAS-----------------",
+            "--------------------------------------------------------",
+            "Nota Logicas: 2.5",
+            "--------------------------------------------------------",
+            "-----------------OPERACIONES RELACIONALES-----------------",
+            "--------------------------------------------------------",
+            "Nota Relacionales 1: 1",
+            "Nota Relacionales 2: 1.5",
+            "Total Relacionales: 2.5",
+            "--------------------------------------------------------",
+            "Funcion ejecutar: +1",
+            "Funcion echo: +1",
+            "llamada sin parametros: +1",
+            "llamada con parametros: +1",
+            "--------------------------------------------------------",
+            "Nota Final Archivo 1: 14.9",
+            "--------------------------------------------------------"
         ];
-
 
         for (const message of expectedOutput){
             expect(tree.stdOut).toContain(message);
         }
     });
 
-    test('Table of multiplication should return correct values for 7', () => {
-        const expectedMultiplicationOutput = [
-            "7 x 1 = 7",
-            "7 x 2 = 14",
-            "7 x 3 = 21",
-            "7 x 4 = 28",
-            "7 x 5 = 35",
-            "7 x 6 = 42",
-            "7 x 7 = 49",
-            "7 x 8 = 56",
-            "7 x 9 = 63",
-            "7 x 10 = 70"
-        ];
-
-        for (let i = 1; i <= 10; i++) {
-            const result = `${7} x ${i} = ${7 * i}`;
-            expect(expectedMultiplicationOutput).toContain(result);
-        }
-    });
-
-    test('Recursive function "mcd" should return correct GCD', () => {
-        let callMcd = new CallFunc(
-            "mcd",
-            [
-                { id: "a", val: new PrimitiveVal("48.0", Primitive.DOUBLE, 0, 0) },
-                { id: "b", val: new PrimitiveVal("18.0", Primitive.DOUBLE, 0, 0) }
-            ],
-            0,
-            0
-        );
-        let result = callMcd.getValue(tree, globalEnv);
-        let expectedResult = new ReturnType(Primitive.DOUBLE, 6.0);
-        expect(result).toStrictEqual(expectedResult);
-    });
-
-    test('Array analysis should return correct sum and count of zeros', () => {
-        let currentEnv: Array<Environment> = environments.filter((env) => env.name === "func_env_AnalizarArreglo");
-        let suma = currentEnv[0].getSymbol(new Symbol("suma", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
-        let ceros = currentEnv[0].getSymbol(new Symbol("ceros", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
-
-        if (suma instanceof Symbol) {
-            expect(suma.value).toBe(17);  // Expected sum of non-zero values in arreglo2
-        }
-
-        if (ceros instanceof Symbol) {
-            expect(ceros.value).toBe(8);  // Expected count of zero values in arreglo2
-        }
-    });
 
 
    afterAll(() => {
         // Define the path where the HTML file will be saved
-        const htmlFilePath = path.join(__dirname, 'medium_file_2_output.html');
+        const htmlFilePath = path.join(__dirname, 'final_file_1_output.html');
 
         // HTML template structure
         const htmlContent = `
@@ -204,14 +167,14 @@ describe('Test Interpreter On Medium 2', () => {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Medium 2</title>
+                <title>Final 1</title>
                 <style>
                     body { font-family: Arial, sans-serif; padding: 20px; }
                     pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; }
                 </style>
             </head>
             <body>
-                <h1>Medium 2 Program Output</h1>
+                <h1>Final 1 Program Output</h1>
                 <pre>${tree.stdOut}</pre>
             </body>
             </html>

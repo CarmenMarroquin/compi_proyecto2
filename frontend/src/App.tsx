@@ -1,16 +1,21 @@
 import { useState } from 'react'
 
-
-
-import Consola, { Estado } from './componentes/Consol'
+import  Consola, { Estado } from './componentes/Consol';
 
 import Navb from './componentes/navbar'
-import { Stack } from 'react-bootstrap'
+import { Stack, Toast } from 'react-bootstrap'
 
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from '@codemirror/lang-javascript';
 import {dracula} from '@uiw/codemirror-theme-dracula';
+import React from 'react';
+import axios from 'axios';
 
+type Errors = {
+  lex: Array<any>,
+  sem: Array<any>,
+  syn: Array<any>,
+}
 
 function App() {
   const [code, setCode] = useState("// Escribe tu codigo");
@@ -19,12 +24,14 @@ function App() {
 
   const [estado, setEstado] = useState<Estado>(Estado.Consola);
   const [consola, setConsola] = useState<string>("SALIDA DE CODIGO");
-  const [simbolos, setSimbolos] = useState<string>("tabla de simbolos");
-  const [errores, setErrores] = useState<string>("tabla de errores");
+  const [simbolos, setSimbolos] = useState<Array<any>>([]);
+  const [errores, setErrores] = useState<Errors>({lex: [], sem: [], syn: []});
   const [ast, setAst] = useState<string>("Arbol de sintaxis abstracta");
+  const [, setProcessing] = useState<boolean>(false);
 
   function handleFileUpload (event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]; // Obtener el primer archivo
+
 
     if (file) {
       const reader = new FileReader();
@@ -61,8 +68,53 @@ function App() {
     };
 
   function handleEjecutar(eventKey: string){
-    // TODO
-    console.log("EJECUTANDO")
+        setProcessing(true);
+        const formData = {
+            content: code
+        };
+
+        const options = {
+            method: "POST",
+            url: "http://localhost:5000/api/interprete/interpretar",
+            //url: VITE_QC_API_URL + "interpreter/interpret",
+            //params: { base64_encoded: "true", fields: "*" },
+            headers: {
+                "content-type": "application/json",
+                "Content-Type": "application/json",
+            },
+            data: formData,
+        };
+
+        axios.request(options).then((response) =>{
+            const res = response;
+            console.log(res);
+            setConsola(res.data.content);
+            setSimbolos(res.data.symTable);
+            setErrores(res.data.err);
+            setAst(res.data.ast);
+
+            // TODO do something with the response
+            //setProcessing(false);
+            showSuccessToast()
+        }).catch(error => {
+            setProcessing(false);
+            // TODO do something with the response
+            console.log(error);
+            //showErrorToast()
+        });};
+
+    const showSuccessToast = (msg?: string) => {
+      /*
+        toast.success(msg || 'Compiled Succesfully!', {
+            position: "bottom-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
+        */
   }
 
   function handleReportes(eventKey: string){
