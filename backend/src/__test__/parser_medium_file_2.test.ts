@@ -94,7 +94,7 @@ describe('Test Interpreter On Medium 2', () => {
 
     test('The "echo" outputs should match expected values', () => {
         const expectedOutput = [
-            "Archivo de prueba 1 \n",
+            "Archivo de prueba 1",
             "Si sale compi1 ",
             "Manejo de entornos correcto :D",
             "Tabla de multiplicar de 7",
@@ -179,8 +179,9 @@ describe('Test Interpreter On Medium 2', () => {
     });
 
     test('Array analysis should return correct sum and count of zeros', () => {
-        let suma = globalEnv.getSymbol(new Symbol("suma", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
-        let ceros = globalEnv.getSymbol(new Symbol("ceros", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let currentEnv: Array<Environment> = environments.filter((env) => env.name === "func_env_AnalizarArreglo");
+        let suma = currentEnv[0].getSymbol(new Symbol("suma", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
+        let ceros = currentEnv[0].getSymbol(new Symbol("ceros", Primitive.NULL, null, VariableTypes.VAR, 0, 0, globalEnv));
 
         if (suma instanceof Symbol) {
             expect(suma.value).toBe(17);  // Expected sum of non-zero values in arreglo2

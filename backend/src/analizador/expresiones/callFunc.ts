@@ -97,7 +97,6 @@ export class CallFunc implements Statement {
                 if (matchingArg.length === 1){
                     const receivedValue: ReturnType = receivedArg.val.getValue(tree, table);
                     //console.log(receivedValue);
-
                     const updateSymbol = new Symbol(receivedArg.id.toLowerCase(), receivedValue.type, receivedValue.value, VariableTypes.VAR, this.line, this.column, funcEnv);
                     funcEnv.updateSymbol(updateSymbol);
                 } else {
@@ -133,12 +132,6 @@ export class CallFunc implements Statement {
             }
         } else {
             try {
-                if (calledFunc.block.instructions[0] instanceof If && funcEnv.name === "func_env_mcd"){
-                    //console.log(calledFunc.block.instructions[7]);
-                    // @ts-ignore
-                    //console.log(calledFunc.block.instructions[0].condition.leftExp.getValue(tree, funcEnv));
-                    //console.log(calledFunc.block.instructions[0].condition.getValue(tree, funcEnv));
-                }
                 ret = calledFunc.block.interpret(tree, funcEnv);
             } catch (err) {
                 tree.errors.push(err as Exception); throw err;

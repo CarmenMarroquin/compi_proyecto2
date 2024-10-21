@@ -54,7 +54,6 @@ export class CodeBlock implements Statement {
                     break
                 }
                 if (retVar.type === TransferOp.RETURN){
-                    debugger;
                     // this operations return  an instance of type ReturnType(TransferOp.RETURN, ReturnType)
                     break;
                 }
@@ -68,7 +67,6 @@ export class CodeBlock implements Statement {
                 return retVar;
             }
             if (retVar.type === TransferOp.RETURN){
-                debugger;
                 // this operations return  an instance of type ReturnType(TransferOp.RETURN, ReturnType)
                 return retVar;
             }

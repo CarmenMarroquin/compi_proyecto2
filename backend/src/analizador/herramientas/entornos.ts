@@ -70,10 +70,11 @@ export function createGlobalEnv() {
             "len",
             [{id: "arg", type: Any.ANY}],
             (arg) =>{
+                debugger;
                 if (arg.type === Primitive.STRING){
                     arg.value = (arg.value as string).length;
                     arg.type = Primitive.INT;
-                } else if (arg.type === VariableTypes.ARRAY){
+                } else if (arg.value instanceof Vector){
                     arg.value = (arg.value as Vector).length;
                     arg.type = Primitive.INT;
                 }
@@ -346,8 +347,12 @@ export default class Environment {
             if (envVar.type === symbol.type) {
                 envVar.value = symbol.value;
                 return;
+            } else if (envVar.type === Any.ANY){
+                envVar.value = symbol.value
+                envVar.type = symbol.type;
+                envVar.symType = symbol.symType;
+                return;
             }
-
             throw new Exception("Semantic", `The variable: ${symbol.id} isn't type: ${symbol.type}`, symbol.row, symbol.column, this.name);
         }
     }
