@@ -82,8 +82,9 @@ export class If implements Statement {
                 for (let item of this.elseBlock.instructions){
                     insFalse.addChildsNode(item.getAST());
                 }
+            } else if (this.elseBlock instanceof If){
+                insFalse.addChildsNode(this.elseBlock.getAST());
             }             //insFalse.addChildsNode(this.elseBlock.getAST());
-
             node.addChildsNode(insFalse);
         }
         return node;

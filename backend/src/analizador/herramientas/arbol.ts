@@ -55,6 +55,7 @@ export default class Tree {
 
     public travelCst(idRoot: any, nodeRoot: Node){
         for (let item of nodeRoot.childs){
+            debugger;
             let name_child = `n${this.count}`;
             this.dot += `${name_child} [label = "${item.value.replace("\"", "\\\"")}"];\n`;
             this.dot += `${idRoot} -> ${name_child};\n`;

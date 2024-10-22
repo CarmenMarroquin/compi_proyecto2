@@ -69,20 +69,13 @@ export class NewVector implements Statement {
     }
 
     getAST(): Node {
-        let node: Node = new Node("");
-        /*
-        if (this.type === Primitive.STRING){
-            let val: string = this.value;
-            val = val.replace(/\n/g, "/n");
-            val= val.replace(/\"/g, '/');
-            val= val.replace(/\'/g, "/");
-            val= val.replace(/\t/g, "‎/t");
-            val= val.replace(/\\/g, "//");
-            node = new Node(val);
-        } else {
-            node = new Node(`${this.value}`);
+        let node: Node = new Node("VECTOR CONTENT []");
+        let accessVector = "[" + this.dimension1 + "]";
+        if (this.dimension2 !== undefined){
+            accessVector += "[" + this.dimension2 + "]";
         }
-        */
+        node.addChild(this.type);
+        node.addChild(accessVector);
         return node;
     }
 }

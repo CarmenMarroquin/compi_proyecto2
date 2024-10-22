@@ -70,7 +70,6 @@ export function createGlobalEnv() {
             "len",
             [{id: "arg", type: Any.ANY}],
             (arg) =>{
-                debugger;
                 if (arg.type === Primitive.STRING){
                     arg.value = (arg.value as string).length;
                     arg.type = Primitive.INT;

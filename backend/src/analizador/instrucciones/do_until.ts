@@ -81,7 +81,7 @@ export class DoUntil implements Statement {
     }
 
     getAST(): Node {
-        let node: Node = new Node("WHILE");
+        let node: Node = new Node("DO UNTIL");
 
         node.addChildsNode(this.condition.getAST());
 

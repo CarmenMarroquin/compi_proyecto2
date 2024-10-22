@@ -87,14 +87,22 @@ export class For implements Statement {
     getAST(): Node {
         let node: Node = new Node("FOR");
 
+        let declaration: Node = new Node("DECLARATION");
+        let update: Node = new Node("UPDATE");
+        let condition: Node = new Node("CONDITION");
 
-        let range: Node = new Node("RANGE");
         //range.addChild(this.start.toString());
         //range.addChild(this.end.toString());
-
-        node.addChildsNode(range);
+        node.addChildsNode(declaration);
+        node.addChildsNode(update);
+        node.addChildsNode(condition);
 
         node.addChildsNode(this.block.getAST());
+
+        declaration.addChildsNode(this.variable.getAST());
+        update.addChildsNode(this.update.getAST());
+        condition.addChildsNode(this.condition.getAST());
+
         // doing this to not add the BLOCK node
         /*
         for (let item of this.block.instructions){

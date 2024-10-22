@@ -96,10 +96,12 @@ export class NativeFunc extends Func {
         throw new Error("Method not implemented.");
     }
     getCST(): Node {
-        throw new Error("Method not implemented.");
+        // TODO
+        return new Node(this.id)
     }
     getAST(): Node {
-        throw new Error("Method not implemented.");
+        // TODO
+        return new Node(this.id)
     }
 }
 

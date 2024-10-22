@@ -88,6 +88,11 @@ export class SetVector implements Statement {
     getAST(): Node{
         let node: Node = new Node("SET");
         node.addChild(this.id);
+        let accessDimension = "[" + this.dimension1 + "]";
+        if (this.dimension2 !== undefined){
+            accessDimension += "[" + this.dimension2 + "]";
+        }
+        node.addChild(accessDimension)
         node.addChildsNode(this.expression.getAST());
         return node;
     }

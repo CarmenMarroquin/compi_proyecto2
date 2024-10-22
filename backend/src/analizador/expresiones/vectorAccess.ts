@@ -15,6 +15,7 @@ export class VectorAccess implements Statement {
     public dimension2: Statement | undefined;
     public line: number;
     public column: number;
+    public foundedValue: Statement | Vector;
 
     constructor(id: string, dimension1: Statement, dimension2: Statement | undefined, line: number, column: number,){
         this.id = id;
@@ -22,6 +23,7 @@ export class VectorAccess implements Statement {
         this.dimension2 = dimension2;
         this.line = line;
         this.column = column;
+        this.foundedValue = new Vector(0, Primitive.NULL, undefined);
     }
 
     interpret(tree: Tree, table: Environment) {
@@ -49,6 +51,7 @@ export class VectorAccess implements Statement {
                                 // CHECK TYPES FOR DIMENSION 2
                                 if (dimension2.type === Primitive.INT && dimension2.value >= 0 && dimension2.value < firstValue.length){
                                     // ACCES RETURN TYPE OF THE ITEM
+                                    this.foundedValue = firstValue.values[dimension2.value];
                                     let secondValue: ReturnType = firstValue.interpretedValues[dimension2.value];
                                     // ASSIGN TO NEW RETURNTYPE
                                     newReturnType = secondValue;
@@ -66,6 +69,7 @@ export class VectorAccess implements Statement {
                         }
                     } else { // IF THIS IS A REGULAR ARRAY OF STATEMENTS
                         if (dimension1.type === Primitive.INT && dimension1.value >= 0 && dimension1.value < symbol.value.length){
+                            this.foundedValue = symbol.value.values[dimension1.value];
                             newReturnType = symbol.value.interpretedValues[dimension1.value];
                         } else {
                             let err = new Exception("Semantic", `Cannot acces vector with variable of value ${dimension1}`, this.line, this.column, table.name);
@@ -101,7 +105,15 @@ export class VectorAccess implements Statement {
         //let node: Node = new Node(this.operator);
         //node.addChildsNode(this.leftExp.getAST());
         //node.addChildsNode(this.rightExp.getAST());
-        return new Node(this.id);
+        let node: Node = new Node("VECTOR ACCESS");
+        let accessVector = "[" + this.dimension1 + "]";
+        if (this.dimension2 !== undefined){
+            accessVector += "[" + this.dimension2 + "]";
+        }
+        node.addChild(this.id);
+        node.addChildsNode(this.foundedValue.getAST());
+        return node;
+
     }
 
 

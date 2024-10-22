@@ -101,28 +101,33 @@ export class Switch implements Statement {
 
     // TODO check this ting
     getAST(): Node {
-        let node = new Node("SIMPLE CASE");
-        /*
+        let node = new Node("SWITCH");
         node.addChildsNode(this.condition.getAST());
-        for (let cs of this.cases){
-            let caseNode = new Node("CASE");
-            let whenNode = new Node("WHEN");
-            whenNode.addChildsNode(cs.when.getAST());
-            let thenNode = new Node("THEN");
-            thenNode.addChildsNode(cs.then.getAST());
-            caseNode.addChildsNode(whenNode);
-            caseNode.addChildsNode(thenNode);
-            node.addChildsNode(caseNode);
+
+
+        if (this.cases !== undefined){
+            for (let cs of this.cases){
+                let caseNode = new Node("CASE");
+                let thenNode = new Node("THEN");
+                caseNode.addChildsNode(cs.cond.getAST());
+                // TO NOT ADD THE ENV
+                for (let inst of cs.then.instructions){
+                    thenNode.addChildsNode(inst.getAST());
+                }
+                node.addChildsNode(caseNode);
+                caseNode.addChildsNode(thenNode);
+            }
         }
-        let elseNode = new Node("ELSE");
-        elseNode.addChildsNode(this.elseVal.getAST());
-        node.addChildsNode(elseNode);
-        if (this.asVar !== undefined){
-            let asNode = new Node("AS");
-            asNode.addChild(this.asVar);
-            node.addChildsNode(asNode);
+
+        if (this.deft !== undefined){
+            let deftNode = new Node("DEFAULT");
+
+            for (let inst of this.deft.instructions){
+                deftNode.addChildsNode(inst.getAST());
+            }
+            node.addChildsNode(deftNode);
         }
-        */
+
         return node;
     }
 }

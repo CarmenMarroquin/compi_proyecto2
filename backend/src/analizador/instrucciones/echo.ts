@@ -44,7 +44,7 @@ export class Echo implements Statement {
     }
 
     getAST(): Node {
-        let node: Node = new Node("PRINT")
+        let node: Node = new Node("ECHO")
         node.addChildsNode(this.args.getAST());
         return node;
     }

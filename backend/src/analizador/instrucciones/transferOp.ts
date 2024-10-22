@@ -55,7 +55,7 @@ export class Continue implements Statement {
     }
 
     getCST(): Node {
-        return new Node("Node");
+        return new Node("Continue");
     }
 }
 

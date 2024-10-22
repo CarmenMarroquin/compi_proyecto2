@@ -56,13 +56,10 @@ export class IsFunction implements Statement {
     }
 
     getAST(): Node {
-        let node: Node = new Node("");
-        /*
-        if (this.leftExp !== undefined){
-            node.addChildsNode(this.leftExp.getAST());
-        }
-        node.addChildsNode(this.rightExp.getAST());
-        */
+        let node: Node = new Node("IS");
+        node.addChildsNode(this.expresion.getAST());
+        node.addChild("IS");
+        node.addChild(this.type.toUpperCase());
         return node;
     }
 
