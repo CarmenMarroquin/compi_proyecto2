@@ -81,6 +81,14 @@ export class Relational implements Statement {
         try {
             leftResult = this.leftExp.getValue(tree, table);
             rightResult = this.rightExp.getValue(tree, table);
+
+            if (rightResult.value instanceof ReturnType){
+                rightResult.value = rightResult.value.value
+            }
+            if (leftResult.value instanceof ReturnType){
+                leftResult.value = leftResult.value.value
+            }
+
             this._typeCheckOperator(leftResult, rightResult, table);
         } catch (err){
             tree.errors.push(err as Exception); throw err;
@@ -99,9 +107,18 @@ export class Relational implements Statement {
     _equal_operation(table: Environment, tree: Tree): ReturnType {
         let leftResult: ReturnType;
         let rightResult: ReturnType;
+        debugger;
         try {
             leftResult = this.leftExp.getValue(tree, table);
             rightResult = this.rightExp.getValue(tree, table);
+
+            if (rightResult.value instanceof ReturnType){
+                rightResult.value = rightResult.value.value
+            }
+            if (leftResult.value instanceof ReturnType){
+                leftResult.value = leftResult.value.value
+            }
+
             this._typeCheckOperator(leftResult, rightResult, table);
         } catch (err){
             tree.errors.push(err as Exception); throw err;
@@ -109,6 +126,7 @@ export class Relational implements Statement {
 
         let results: Ret = this._transformAsciiToNumber(leftResult, rightResult);
         leftResult = results.left; rightResult = results.right;
+
 
         //console.error(`LEFT: {type: ${leftResult.type}, val: ${leftResult.value}}, RIGHT: {type: ${rightResult.type}, val: ${rightResult.value}}`);
 
@@ -205,16 +223,17 @@ export class Relational implements Statement {
         try {
             leftResult = this.leftExp.getValue(tree, table);
             rightResult = this.rightExp.getValue(tree, table);
+
+            if (rightResult.value instanceof ReturnType){
+                rightResult.value = rightResult.value.value
+            }
+            if (leftResult.value instanceof ReturnType){
+                leftResult.value = leftResult.value.value
+            }
+
             this._typeCheckOperator(leftResult, rightResult, table);
         } catch (err){
             throw err;
-        }
-
-        if (rightResult.value instanceof ReturnType){
-            rightResult.value = rightResult.value.value
-        }
-        if (leftResult.value instanceof ReturnType){
-            leftResult.value = leftResult.value.value
         }
 
 

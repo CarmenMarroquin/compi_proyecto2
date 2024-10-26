@@ -148,7 +148,6 @@ export class ConstDeclaration implements Statement {
         let value: ReturnType;
         let symbols: Symbol[] = [];
 
-
         for (const variable of this.vars) {
             symbols.push(new Symbol(variable.toLowerCase(), this.dataType, null, VariableTypes.CONST, this.line, this.column, table));
         }
@@ -231,9 +230,6 @@ export class VectorDeclaration implements Statement {
     }
 
     interpret(tree: Tree, table: Environment) {
-        if (this.line === 210){
-            debugger;
-        }
         let value: ReturnType;
         let newSymbol: Symbol;
 

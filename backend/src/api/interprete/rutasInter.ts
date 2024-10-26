@@ -94,7 +94,6 @@ router.post('/interpretar', (req, res) => {
     // Create global environment and tree
 
     const globalEnv = createGlobalEnv();
-    console.log(globalEnv);
     const tree = new Tree(instructions, globalEnv);
 
     let len = 0;
@@ -128,7 +127,7 @@ router.post('/interpretar', (req, res) => {
         } catch (err) {
             len = 0;
             tree.instructions = [];
-            //console.log(err);
+            console.log(err);
         }
     }
 

@@ -34,17 +34,17 @@ export class TernaryOperator implements Statement {
         let elseValue: ReturnType;
         try {
             condition = this.condition.getValue(tree, table);
-            thenValue = this.thenValue.getValue(tree, table);
-            elseValue = this.elseValue.getValue(tree, table);
+
+            if (condition.value){
+                return this.thenValue.getValue(tree, table);
+            } else {
+                return this.elseValue.getValue(tree, table);
+            }
+
         } catch (err){
             tree.errors.push(err as Exception); throw err;
         }
 
-        if (condition.value){
-            return thenValue;
-        } else {
-            return elseValue;
-        }
 
     }
 

@@ -482,6 +482,11 @@ export class Arithmetic implements Statement {
 
     _uminusOperation(table: Environment, tree: Tree): ReturnType {
         let rightResult: ReturnType = this.rightExp.getValue(tree, table);
+
+        if (rightResult.value instanceof ReturnType){
+            rightResult.value = rightResult.value.value
+        }
+
         if (rightResult.value instanceof Exception){
             throw rightResult.value;
         }

@@ -54,6 +54,48 @@ export class Logical implements Statement {
     // I should change this but I'm a lazy bastard so IDC
 
     _andOperation(table: Environment, tree: Tree): ReturnType {
+        let leftResult: ReturnType;
+        let rightResult: ReturnType;
+        try {
+            // @ts-ignore
+            leftResult = this.leftExp?.getValue(tree, table);
+        } catch(err){
+            throw err;
+        }
+
+        if (leftResult.value instanceof ReturnType){
+            leftResult.value = leftResult.value.value
+        }
+
+        if (leftResult.type !== Primitive.BOOL){
+            throw new Exception("Type Error", `"&&" not supported between instances of ${leftResult.type}`, this.line, this.column, table.name);
+        }
+
+        if (!leftResult.value){
+            return new ReturnType(Primitive.BOOL, leftResult.value);
+        }
+
+        try {
+            rightResult = this.rightExp.getValue(tree, table);
+        } catch (err){
+            throw err;
+        }
+
+        if (rightResult.value instanceof ReturnType){
+            rightResult.value = rightResult.value.value
+        }
+
+        if (rightResult.type !== Primitive.BOOL){
+            throw new Exception("Type Error", `"&&" not supported between instances of ${rightResult.type}`, this.line, this.column, table.name);
+        }
+
+        if (!rightResult.value){
+            return new ReturnType(Primitive.BOOL, rightResult.value);
+        }
+
+        return new ReturnType(Primitive.BOOL, rightResult.value);
+
+        /*
         let results: Ret;
         try{
             results = this._testOperators(table, tree);
@@ -68,6 +110,7 @@ export class Logical implements Statement {
         }
 
         throw new Exception("Type Error", `"&&" not supported between instances of ${leftResult.type} and ${rightResult.type}`, this.line, this.column, table.name);
+        */
     }
 
     _orOperation(table: Environment, tree: Tree): ReturnType {
@@ -89,6 +132,10 @@ export class Logical implements Statement {
 
     _notOperation(table: Environment, tree: Tree): ReturnType {
         let rightResult: ReturnType = this.rightExp.getValue(tree, table);
+
+        if (rightResult.value instanceof ReturnType){
+            rightResult.value = rightResult.value.value
+        }
 
         if (rightResult.type === Primitive.BOOL){
             return new ReturnType(Primitive.BOOL, !rightResult.value);
