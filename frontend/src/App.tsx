@@ -38,6 +38,11 @@ function App() {
   
       reader.onload = (e) => {
         setCode("");
+        setConsola("SALIDA DE CODIGO");
+        setSimbolos([]);
+        setErrores({lex: [], sem: [], syn: []});
+        setAst("")
+
         const text = e.target?.result as string;
         setCode(text);
       };

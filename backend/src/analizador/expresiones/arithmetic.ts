@@ -103,6 +103,7 @@ export class Arithmetic implements Statement {
         if (leftResult.type === Primitive.INT){
             switch (rightResult.type){
                 case Primitive.INT: {
+                    let newVer = leftResult.value + rightResult.value;
                     return new ReturnType(Primitive.INT, leftResult.value + rightResult.value);
                 }
                 case Primitive.DOUBLE: {
@@ -507,6 +508,12 @@ export class Arithmetic implements Statement {
         let rightResult: ReturnType = this.rightExp.getValue(tree, table);
         if (rightResult.value instanceof Exception) {
             throw new Exception(rightResult.value.type, rightResult.value.description, this.line, rightResult.value.column, table.name);
+        }
+        if (rightResult.value instanceof ReturnType){
+            rightResult.value = rightResult.value.value
+        }
+        if (leftResult.value instanceof ReturnType){
+            leftResult.value = leftResult.value.value
         }
 
         return { left: leftResult, right: rightResult };

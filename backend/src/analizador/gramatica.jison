@@ -372,6 +372,7 @@ declaracion_variables:
 |   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL new_vectores   { $$ = new VectorDeclaration($2[0], $4, $10, @1.first_line, @1.first_column); }
 |   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_valores TK_DCORCHETE  { $$ = new VectorDeclaration($2[0], $4, $9, @1.first_line, @1.first_column); }
 |   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_ICORCHETE TK_DCORCHETE TK_IGUAL TK_ICORCHETE lista_vectores TK_DCORCHETE { $$ = new VectorDeclaration($2[0], $4, $11, @1.first_line, @1.first_column); }
+|   RW_LET identificadores TK_DOS_PUNTOS tipo TK_ICORCHETE TK_DCORCHETE TK_IGUAL llamadas  { $$ = new VectorDeclaration($2[0], $4, $8, @1.first_line, @1.first_column); }
 |   RW_LET identificadores TK_DOS_PUNTOS tipo TK_IGUAL expresion    { $$ = new VarDeclaration($2, $4, $6, @1.first_line, @1.first_column); }
 |   RW_LET identificadores TK_DOS_PUNTOS tipo                       { $$ = new VarDeclaration($2, $4, undefined, @1.first_line, @1.first_column); }
 ;

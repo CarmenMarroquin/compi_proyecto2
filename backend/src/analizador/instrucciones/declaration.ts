@@ -9,6 +9,7 @@ import { Exception } from "../errores";
 import { Expression } from "typescript";
 import { Vector } from "../expresiones/vector";
 import { NewVector } from "../expresiones/newVectores";
+import { CallFunc } from "../expresiones/callFunc";
 
 
 type ExpType = undefined | Statement
@@ -213,11 +214,11 @@ type ValuesTypes = Statement[] | null[] | Vector[];
 export class VectorDeclaration implements Statement {
     public id: string;
     public dataType: Primitive;
-    public vector: Vector | NewVector;
+    public vector: Vector | NewVector | CallFunc;
     public line: number;
     public column: number;
 
-    constructor(id: string, dataType: Primitive, vector: Vector | NewVector, line: number, column: number,){
+    constructor(id: string, dataType: Primitive, vector: Vector | NewVector | CallFunc, line: number, column: number,){
         this.id = id;
         this.dataType = dataType;
         this.vector = vector;
@@ -230,6 +231,9 @@ export class VectorDeclaration implements Statement {
     }
 
     interpret(tree: Tree, table: Environment) {
+        if (this.line === 210){
+            debugger;
+        }
         let value: ReturnType;
         let newSymbol: Symbol;
 
@@ -272,6 +276,11 @@ export class VectorDeclaration implements Statement {
         }
 
         if (this.vector instanceof NewVector){
+            let result = this.vector.getValue(tree, table);
+            newSymbol.value = result.value;
+        }
+
+        if (this.vector instanceof CallFunc){
             let result = this.vector.getValue(tree, table);
             newSymbol.value = result.value;
         }

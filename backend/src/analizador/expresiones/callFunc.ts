@@ -42,6 +42,7 @@ export class CallFunc implements Statement {
                 //console.log(symbol.value);
             }
         } catch(err){
+            console.log("ERROR")
             throw err;
         }
 
@@ -113,12 +114,18 @@ export class CallFunc implements Statement {
                 let tempSym: Symbol = new Symbol(calledFuncArg.id, calledFuncArg.type, null, VariableTypes.VAR, 0, 0, funcEnv);
                 tempSym = funcEnv.getSymbol(tempSym);
                 if (tempSym.value === null){
+                    console.log(this);
+                    console.log(tempSym);
                     throw new Exception("Semantic", `No argument where suplied for variable ${tempSym.id} at ${this.id}`, this.line, this.column, funcEnv.name);
                 }
             } catch(err){
                 tree.errors.push(err as Exception); throw err;
             }
         }
+
+        // if (funcEnv.name === "func_env_pascal"){
+        //     debugger;
+        // }
 
         // NOW EXECUTE CODE
         let ret: ReturnType | void;

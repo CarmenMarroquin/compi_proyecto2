@@ -106,7 +106,7 @@ export function createGlobalEnv() {
         new NativeFunc(
             Primitive.STRING,
             "tostring",
-            [{id: "arg", type: Primitive.DOUBLE}],
+            [{id: "arg", type: Any.ANY}],
             (arg) =>{
                 arg.value = String(arg.value);
                 arg.type = Primitive.STRING;
@@ -168,26 +168,26 @@ export function createGlobalEnv() {
             [{id: "arg", type: Any.ANY}],
             (arg) =>{
                 const argAsVector = arg.value as Vector;
-                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE || argAsVector.dataType === Primitive.BOOL){
+                if (arg.type === Primitive.INT || arg.type === Primitive.DOUBLE){
                     return new ReturnType(
-                        argAsVector.dataType,
-                        argAsVector.interpretedValues.reduce((prev, current) => {
-                            return (prev.value > current.value) ? prev.value : current.value;
-                        })
+                        arg.type,
+                        argAsVector.interpretedValues.reduce((max, current) => current.value > max ? current : max)
                     );
-                } else if (argAsVector.dataType === Primitive.CHAR){
+                } else if (arg.type === Primitive.BOOL){
                     return new ReturnType(
-                        argAsVector.dataType,
-                        argAsVector.interpretedValues.reduce((prev, current) => {
-                            return ((prev.value as string).charCodeAt(0) > (current.value as string).charCodeAt(0)) ? prev.value : current.value;
-                        })
+                        arg.type,
+                        argAsVector.interpretedValues.some(value => value.value)
                     );
-                } else if (argAsVector.dataType === Primitive.STRING){
+
+                } else if (arg.type === Primitive.CHAR){
                     return new ReturnType(
-                        argAsVector.dataType,
-                        argAsVector.interpretedValues.reduce((prev, current) => {
-                            return (prev.value < current.value) ? prev.value : current.value;
-                        })
+                        arg.type,
+                        argAsVector.interpretedValues.reduce((max, current) => (current.value as string).charCodeAt(0) > (max.value as string).charCodeAt(0) ? current : max)
+                    );
+                } else if (arg.type === Primitive.STRING){
+                    return new ReturnType(
+                        arg.type,
+                        [...argAsVector.interpretedValues].sort()[argAsVector.interpretedValues.length - 1]
                     );
                 }
                 return arg;
@@ -206,26 +206,26 @@ export function createGlobalEnv() {
             [{id: "arg", type: Any.ANY}],
             (arg) =>{
                 const argAsVector = arg.value as Vector;
-                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE || argAsVector.dataType === Primitive.BOOL){
+                if (arg.type === Primitive.INT || arg.type === Primitive.DOUBLE ){
                     return new ReturnType(
-                        argAsVector.dataType,
-                        argAsVector.interpretedValues.reduce((prev, current) => {
-                            return (prev.value < current.value) ? prev.value : current.value;
-                        })
+                        arg.type,
+                        argAsVector.interpretedValues.reduce((max, current) => current.value < max ? current : max)
                     );
-                } else if (argAsVector.dataType === Primitive.CHAR){
+                } else if (arg.type === Primitive.BOOL){
                     return new ReturnType(
-                        argAsVector.dataType,
-                        argAsVector.interpretedValues.reduce((prev, current) => {
-                            return ((prev.value as string).charCodeAt(0) < (current.value as string).charCodeAt(0)) ? prev.value : current.value;
-                        })
+                        arg.type,
+                        argAsVector.interpretedValues.every(value => value.value)
                     );
-                } else if (argAsVector.dataType === Primitive.STRING){
+
+                } else if (arg.type === Primitive.CHAR){
                     return new ReturnType(
-                        argAsVector.dataType,
-                        argAsVector.interpretedValues.reduce((prev, current) => {
-                            return (prev.value > current.value) ? prev.value : current.value;
-                        })
+                        arg.type,
+                        argAsVector.interpretedValues.reduce((max, current) => (current.value as string).charCodeAt(0) < (max.value as string).charCodeAt(0) ? current : max)
+                    );
+                } else if (arg.type === Primitive.STRING){
+                    return new ReturnType(
+                        arg.type,
+                        [...argAsVector.interpretedValues].sort()[0]
                     );
                 }
 
@@ -245,25 +245,25 @@ export function createGlobalEnv() {
             [{id: "arg", type: Any.ANY}],
             (arg) =>{
                 const argAsVector = arg.value as Vector;
-                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE){
+                if (arg.type === Primitive.INT || arg.type === Primitive.DOUBLE){
                     return new ReturnType(
-                        argAsVector.dataType,
+                        arg.type,
                         argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0)
                     );
-                } else if (argAsVector.dataType === Primitive.BOOL){
+                } else if (arg.type === Primitive.BOOL){
                     return new ReturnType(
                         Primitive.INT,
                         argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0)
                     );
                 }
-                else if (argAsVector.dataType === Primitive.CHAR){
+                else if (arg.type === Primitive.CHAR){
                     return new ReturnType(
                         Primitive.INT,
                         argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + (currentValue.value as string).charCodeAt(0), 0)
                     );
-                } else if (argAsVector.dataType === Primitive.STRING){
+                } else if (arg.type === Primitive.STRING){
                     return new ReturnType(
-                        argAsVector.dataType,
+                        arg.type,
                         argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, "")
                     );
                 }
@@ -283,13 +283,13 @@ export function createGlobalEnv() {
             [{id: "arg", type: Any.ANY}],
             (arg) =>{
                 const argAsVector = arg.value as Vector;
-                if (argAsVector.dataType === Primitive.INT || argAsVector.dataType === Primitive.DOUBLE || argAsVector.dataType === Primitive.BOOL){
+                if (arg.type === Primitive.INT || arg.type === Primitive.DOUBLE || arg.type === Primitive.BOOL){
                     const sum = argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + currentValue.value, 0);
                     return new ReturnType(
                         Primitive.DOUBLE,
                         sum / argAsVector.length
                     );
-                } else if (argAsVector.dataType === Primitive.CHAR){
+                } else if (arg.type === Primitive.CHAR){
                     const sum = argAsVector.interpretedValues.reduce((accumulator, currentValue) => accumulator + (currentValue.value as string).charCodeAt(0), 0);
                     return new ReturnType(
                         Primitive.INT,
@@ -311,9 +311,10 @@ export default class Environment {
     public name: string;
     public parent?: Environment;
     public table: Map<string, Symbol>;
+    public global = false;
 
     constructor(parent?: Environment, name: string = "Global") {
-        const global = parent ? true : false;
+        this.global = parent === undefined ? true : false;
         this.parent = parent;
         this.table = new Map();
         this.name = name;

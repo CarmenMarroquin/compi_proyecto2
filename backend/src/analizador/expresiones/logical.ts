@@ -108,6 +108,14 @@ export class Logical implements Statement {
             throw err;
         }
 
+
+        if (rightResult.value instanceof ReturnType){
+            rightResult.value = rightResult.value.value
+        }
+        if (leftResult.value instanceof ReturnType){
+            leftResult.value = leftResult.value.value
+        }
+
         return { left: leftResult, right: rightResult };
     }
 

@@ -79,7 +79,9 @@ export class Switch implements Statement {
                 caseEnv.name = "default_env";
                 thenBlock = this.deft.interpret(tree, caseEnv);
                 if (thenBlock instanceof ReturnType){
-                    if (thenBlock.type === TransferOp.BREAK || thenBlock.type === TransferOp.CONTINUE) {
+                    if (thenBlock.type === TransferOp.BREAK){
+                    }
+                    if (thenBlock.type === TransferOp.CONTINUE) {
                         // this operations return  an instance of type ReturnType({TransferOp.BREAK or TransferOp.CONTINUE}, null)
                         return thenBlock;
                     }

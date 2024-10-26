@@ -39,7 +39,8 @@ export class VectorAccess implements Statement {
             let dimension1: ReturnType = this.dimension1.getValue(tree, table);
             if (symbol.symType === VariableTypes.ARRAY){
                 if (symbol.value instanceof Vector){
-                    if (symbol.value.dataType === VariableTypes.ARRAY && Array.isArray(symbol.value)){
+                    // COMMENT THIS CONDITION
+                    if (symbol.value.dataType === VariableTypes.ARRAY /*&& Array.isArray(symbol.value)*/){
                         let firstValue: Vector | Statement;
                         // CHECK types of first value
                         if (dimension1.type === Primitive.INT && dimension1.value >= 0 && dimension1.value < symbol.value.values.length){

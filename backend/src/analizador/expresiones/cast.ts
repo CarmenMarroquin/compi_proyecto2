@@ -40,7 +40,7 @@ export class Cast implements Statement {
                     case Primitive.INT: {
                         if (res.type === Primitive.DOUBLE){
                             let temp: string | number = String(res.value);
-                            newRet.value = parseFloat(temp);
+                            newRet.value = parseInt(res.value.toString());
                             newRet.type = Primitive.INT;
                             return newRet;
                         } else if (res.type === Primitive.CHAR){
